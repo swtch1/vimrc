@@ -15,7 +15,8 @@ set encoding=utf-8
 set updatetime=100
 "set splitbelow
 set splitright
-set timeoutlen=750 " ms to wait before waiting for extra keys
+" ms to wait before waiting for extra keys
+set timeoutlen=700 ttimeoutlen=0
 set shortmess-=S " show count when searching
 set scrolloff=5
 set visualbell
@@ -23,14 +24,21 @@ set history=10000
 set wildignorecase
 set number relativenumber
 set hidden " allow navigating away from unsaved buffers
-"set autochdir
+" make completion sane
+"set completeopt-="preview"
+"set completeopt+="longest"
+"for nvim
+set completeopt=menuone,menu,longest
+" for vim
+"set completeopt=menuone,menu,longest,popup
+set wildmenu
+set wildmode=longest,list,full
 
 " allow backspace to delete indentation and inserted text
 set backspace=indent,eol,start
 
-" make completion sane
-set completeopt-="preview"
-"set completeopt="menu,preview,longest" " muck with this, but it's not working now
+" nvim terminal
+tnoremap <Esc> <C-\><C-n>
 
 " remember line position
 au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g`\"" | endif
@@ -90,12 +98,14 @@ let g:go_gopls_use_placeholders = "gopls"
 let mapleader = "\<Space>"
 
 " keymap | general
-map Q <Nop>" this piece of trash needs to die
+" this piece of trash needs to die
+map Q <Nop>
 inoremap <C-@> <C-x><C-o>
 nnoremap <Leader><Esc> :noh<CR>
 nnoremap <Leader>! :q!<CR>
 nnoremap <Leader>p :GFiles<CR>
-nnoremap <Leader>w :w<CR>" make saving easier
+" make saving easier
+nnoremap <Leader>w :w<CR>
 nnoremap <Leader>v <C-v>
 "make Y copy to the end of the line
 nnoremap Y y$
@@ -104,11 +114,12 @@ nnoremap n nzz
 nnoremap N Nzz
 " undo break points..don't undo every damn thing from last insert
 inoremap , ,<c-g>u
-inoremap . .<c-g>u
-inoremap = ?<c-g>u
+inoremap = =<c-g>u
 inoremap , ,<c-g>u
-"duplicate blocks of text
-nnoremap <Leader>d Va}:t'><CR>
+" dot should create break point, and also autocomplete
+inoremap . .<c-g>u
+"duplicate (copy) blocks of text
+nnoremap <Leader>cb Va}:t'><CR>
 
 nnoremap <Leader>h <C-W>h
 nnoremap <Leader>j <C-W>j
@@ -117,6 +128,10 @@ nnoremap <Leader>l <C-W>l
 
 nnoremap <Leader>o <C-o>
 nnoremap <Leader>i <C-i>
+
+" keymap | run
+" do the last thing... again
+nnoremap <Leader>rl :<Up><CR>
 
 " keymap | buffers
 nnoremap <Leader>q :bd<CR>
@@ -137,9 +152,11 @@ nmap <Leader>N :lprev<CR>
 
 " keymap | focus
 nnoremap <Leader>fn :NERDTreeTabsOpen<CR>:NERDTreeFocus<CR>
+nnoremap <Leader>ff :files<CR>
 nnoremap <Leader>fb :Buffers<CR>
 nnoremap <Leader>ft :TagbarOpenAutoClose<CR>
 nnoremap <Leader>fT :TagbarOpen<CR>
+nnoremap <Leader>fm :MaximizerToggle<CR>
 
 " keymap | close
 nmap <Leader>cc :cclose<CR>:lclose<CR>
@@ -157,14 +174,15 @@ autocmd FileType go nnoremap <buffer> <silent> <C-w><C-]> :<C-u>call go#def#Jump
 autocmd FileType go nnoremap <buffer> <silent> <C-w>] :<C-u>call go#def#Jump("split", 0)<CR>
 autocmd FileType go nnoremap <buffer> <silent> <C-t> :<C-U>call go#def#StackPop(v:count1)<cr>
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
+autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
 autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
 autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
-autocmd FileType go nnoremap <Leader>ga :GoAlternate<CR>" show test file
+autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>" show test file
 autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>" references to symbol
 autocmd FileType go nnoremap <Leader>gn :GoRename<CR>
 autocmd FileType go nnoremap <Leader>gc :GoCallers<CR>
-autocmd FileType go nnoremap <Leader>gt :GoTest<CR>
-autocmd FileType go nnoremap <Leader>gf :GoTestFunc<CR>
+autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
+autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
 autocmd FileType go nnoremap <Leader>gg :GoRun<CR>
 autocmd FileType go nnoremap <Leader>gs :GoFillStruct<CR>
 autocmd FileType go nnoremap <Leader>gv :GoVet<CR>
@@ -172,6 +190,17 @@ autocmd FileType go nnoremap <Leader>gV :GoMetaLinter<CR>
 autocmd FileType go nnoremap <Leader>gh :GoCoverageToggle<CR>
 autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
 autocmd FileType go nnoremap <Leader>ife :GoIfErr<CR>kkA
+autocmd FileType go nnoremap <Leader>dd :GoDebugStart<CR>
+autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
+autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
+autocmd FileType go nnoremap <Leader>db :GoDebugBreakpoint<CR>
+autocmd FileType go nnoremap <Leader>dc :GoDebugContinue<CR>
+autocmd FileType go nnoremap <Leader>dr :GoDebugRestart<CR>
+autocmd FileType go nnoremap <Leader>do :GoDebugStepOut<CR>
+autocmd FileType go nnoremap <Leader>dn :GoDebugNext<CR>
+autocmd FileType go nnoremap <Leader>ds :GoDebugStep<CR>
+autocmd FileType go nnoremap <Leader>dp :GoDebugPrint 
+autocmd FileType go nnoremap <Leader>dq :GoDebugStop<CR>
 "autocmd FileType go nnoremap <Leader>gh :<C-u>call GOVIMHover()<CR>
 
 " keymap | gitgutter
@@ -195,12 +224,29 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'mhinz/neovim-remote'
+Plug 'skywind3000/vim-terminal-help'
+let g:terminal_key = "<c-h>"
+let g:terminal_height = 30
+"let g:terminal_pos = "rightabove"
+let g:terminal_close = 1
+let g:terminal_cwd = 1
+" hide terminal in buffers list
+let g:terminal_list = 0
+Plug 'skywind3000/asyncrun.vim'
+Plug 'ervandew/supertab'
+let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+let g:SuperTabLongestHighlight = 1
+let g:SuperTabLongestEnhanced = 1
+Plug 'szw/vim-maximizer'
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_map_keys = 0
 
+"Plug 'puremourning/vimspector'"for debugging across languages. needs setup help.
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+let g:go_debug_log_output = ''
+let g:go_doc_popup_window = 1
 "Plug 'myitcv/govim'
-" plugin specific | govim
 "call govim#config#Set("ExperimentalProgressPopups", 1)
 
 Plug 'ervandew/ag'
@@ -246,17 +292,17 @@ let g:tagbar_width=120
 "Plug 'jakedouglas/exuberant-ctags'
 Plug 'morhetz/gruvbox'
 Plug 'alfredodeza/jacinto.vim'
-Plug 'elzr/vim-json'
-au! BufRead,BufNewFile *.json set filetype=json
-augroup json_autocmd
-  autocmd!
-  autocmd FileType json set autoindent
-  autocmd FileType json set formatoptions=tcq2l
-  autocmd FileType json set textwidth=78 shiftwidth=2
-  autocmd FileType json set softtabstop=2 tabstop=8
-  autocmd FileType json set expandtab
-  autocmd FileType json set foldmethod=syntax
-augroup END
+"Plug 'elzr/vim-json'
+"au! BufRead,BufNewFile *.json set filetype=json
+"augroup json_autocmd
+"  autocmd!
+"  autocmd FileType json set autoindent
+"  autocmd FileType json set formatoptions=tcq2l
+"  autocmd FileType json set textwidth=78 shiftwidth=2
+"  autocmd FileType json set softtabstop=2 tabstop=8
+"  autocmd FileType json set expandtab
+"  autocmd FileType json set foldmethod=syntax
+"augroup END
 
 Plug 'bling/vim-bufferline'
 let g:bufferline_echo = 0 " dont let bufferline overwrite command line
