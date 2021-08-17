@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# find FIXME lines in the cached diff before commit
+fixme=$(git diff --cached --unified=1 -G'FIXME' --name-only)
+
+if [ "$fixme" != "" ];then
+        echo "'FIXME' tag detected:"
+        echo "  ${fixme}"
+        exit 1
+fi
+

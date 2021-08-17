@@ -16,19 +16,17 @@ set updatetime=100
 "set splitbelow
 set splitright
 " ms to wait before waiting for extra keys
-set timeoutlen=700 ttimeoutlen=0
+set timeoutlen=750 ttimeoutlen=0
 set shortmess-=S " show count when searching
-set scrolloff=5
+set scrolloff=3
 set visualbell
 set history=10000
 set wildignorecase
 set number relativenumber
 set hidden " allow navigating away from unsaved buffers
-" make completion sane
-"set completeopt-="preview"
-"set completeopt+="longest"
+"set autochdir " will determine whether we should always use dir of the current file
 "for nvim
-set completeopt=menuone,menu,longest
+set completeopt=menuone,menu,longest,preview
 " for vim
 "set completeopt=menuone,menu,longest,popup
 set wildmenu
@@ -36,6 +34,9 @@ set wildmode=longest,list,full
 
 " allow backspace to delete indentation and inserted text
 set backspace=indent,eol,start
+
+" remember my buffers
+exec 'set viminfo=%,' . &viminfo
 
 " nvim terminal
 tnoremap <Esc> <C-\><C-n>
@@ -47,7 +48,7 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g
 set maxmempattern=1048576
 
 " properly handle colors in tmux
-set background=dark
+"set background=light
 set t_Co=256
 set t_ut=
 
@@ -88,7 +89,7 @@ let g:go_term_enabled=0
 let g:go_term_reuse = 1
 let g:go_term_close_on_exit = 0
 let g:go_term_mode="split"
-let g:go_metalinter_autosave=1
+let g:go_metalinter_autosave=0
 let g:go_code_completion_icase = 1
 "let g:go_auto_sameids = 1
 "let g:go_list_height = 25
@@ -102,8 +103,10 @@ let mapleader = "\<Space>"
 map Q <Nop>
 inoremap <C-@> <C-x><C-o>
 nnoremap <Leader><Esc> :noh<CR>
+nnoremap <Leader>1 :q<CR>
 nnoremap <Leader>! :q!<CR>
-nnoremap <Leader>p :GFiles<CR>
+"nnoremap <Leader>p :Telescope find_files<CR>
+nnoremap <Leader>p :FZF<CR>
 " make saving easier
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>v <C-v>
@@ -129,9 +132,8 @@ nnoremap <Leader>l <C-W>l
 nnoremap <Leader>o <C-o>
 nnoremap <Leader>i <C-i>
 
-" keymap | run
-" do the last thing... again
-nnoremap <Leader>rl :<Up><CR>
+" keymap | edit
+nnoremap <Leader>ew :e %:p:h
 
 " keymap | buffers
 nnoremap <Leader>q :bd<CR>
@@ -153,12 +155,12 @@ nmap <Leader>N :lprev<CR>
 " keymap | focus
 nnoremap <Leader>fn :NERDTreeTabsOpen<CR>:NERDTreeFocus<CR>
 nnoremap <Leader>ff :files<CR>
-nnoremap <Leader>fb :Buffers<CR>
+nnoremap <Leader>fb :Telescope buffers<CR>
 nnoremap <Leader>ft :TagbarOpenAutoClose<CR>
 nnoremap <Leader>fT :TagbarOpen<CR>
 nnoremap <Leader>fm :MaximizerToggle<CR>
 
-" keymap | close
+" keymap | lists
 nmap <Leader>cc :cclose<CR>:lclose<CR>
 nnoremap <Leader>cn :NERDTreeTabsClose<CR>
 
@@ -177,10 +179,10 @@ autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
 autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
 autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
 autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
-autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>" show test file
-autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>" references to symbol
+autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>
+autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>
 autocmd FileType go nnoremap <Leader>gn :GoRename<CR>
-autocmd FileType go nnoremap <Leader>gc :GoCallers<CR>
+autocmd FileType go nnoremap <Leader>gc :GoMetaLinter<CR>
 autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
 autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
 autocmd FileType go nnoremap <Leader>gg :GoRun<CR>
@@ -189,7 +191,6 @@ autocmd FileType go nnoremap <Leader>gv :GoVet<CR>
 autocmd FileType go nnoremap <Leader>gV :GoMetaLinter<CR>
 autocmd FileType go nnoremap <Leader>gh :GoCoverageToggle<CR>
 autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
-autocmd FileType go nnoremap <Leader>ife :GoIfErr<CR>kkA
 autocmd FileType go nnoremap <Leader>dd :GoDebugStart<CR>
 autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
 autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
@@ -208,14 +209,15 @@ nnoremap <Leader>Hs :GitGutterStageHunk<CR>
 nnoremap <Leader>Hn :GitGutterNextHunk<CR>
 nnoremap <Leader>HN :GitGutterPrevHunk<CR>
 nnoremap <Leader>Hp :GitGutterPreviewHunk<CR>
+nnoremap <Leader>Hu :GitGutterUndoHunk<CR>
 
-" keymap | comment
-"noremap <F4> :call CommentLine()<CR>
+" keymap | commentary
+vnoremap / :Commentary<CR><Esc>
 
 " macros
-let @i="oif err != nil {\<CR>return \<CR>}\<Esc>kA"
-let @f="A // FIXME: testing"
-let @p="ifmt.Printf(\" -> DEBUG: %s %+v\\n\", ) // FIXME: testing\<Esc>BBBBi\""
+let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\" :%w\", err)\<Esc>BBhi"
+let @f="A // FIXME: (JMT) testing"
+let @p="ifmt.Printf(\" -> DEBUG: %s %+v\\n\", ) // FIXME: (JMT) testing\<Esc>BBBBBi\""
 let @d="BveyO// \<Esc>pA "
 
 " tabs for go
@@ -224,13 +226,17 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dadbod'
+Plug 'kristijanhusak/vim-dadbod-completion'
+Plug 'ray-x/lsp_signature.nvim'
 Plug 'mhinz/neovim-remote'
 Plug 'skywind3000/vim-terminal-help'
 let g:terminal_key = "<c-h>"
 let g:terminal_height = 30
-"let g:terminal_pos = "rightabove"
+let g:terminal_pos = "topleft"
 let g:terminal_close = 1
-let g:terminal_cwd = 1
+let g:terminal_cwd = 0
 " hide terminal in buffers list
 let g:terminal_list = 0
 Plug 'skywind3000/asyncrun.vim'
@@ -244,6 +250,7 @@ let g:gitgutter_map_keys = 0
 
 "Plug 'puremourning/vimspector'"for debugging across languages. needs setup help.
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+let g:go_metalinter_command = 'staticcheck'
 let g:go_debug_log_output = ''
 let g:go_doc_popup_window = 1
 "Plug 'myitcv/govim'
@@ -251,6 +258,10 @@ let g:go_doc_popup_window = 1
 
 Plug 'ervandew/ag'
 
+"Plug 'nvim-lua/popup.nvim'
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'nvim-telescope/telescope.nvim'
+"Plug 'nvim-telescope/telescope-fzf-native.nvim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 let g:fzf_buffers_jump = 1
@@ -308,22 +319,25 @@ Plug 'bling/vim-bufferline'
 let g:bufferline_echo = 0 " dont let bufferline overwrite command line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-let g:airline_theme='term'
-let g:airline_section_y = '%-0.25{getcwd()}'
-let g:airline_mode_map = {
-    \ '__' : '--',
-    \ 'n'  : 'N',
-    \ 'i'  : 'I',
-    \ 'R'  : 'R',
-    \ 'c'  : 'C',
-    \ 'v'  : 'V',
-    \ 'V'  : 'V-L',
-    \ '' : 'V-B',
-    \ 's'  : 'S',
-    \ 'S'  : 'S-L',
-    \ '' : 'S-B',
-    \ 't'  : 'T',
-    \ }
+"let g:airline_theme='term'
+let g:airline_theme='xtermlight'
+"let g:airline_theme='luna'
+"let g:airline_theme='base16_heetch'
+let g:airline_section_y = '%-0.15{getcwd()}'
+"let g:airline_mode_map = {
+"    \ '__' : '--',
+"    \ 'n'  : 'N',
+"    \ 'i'  : 'I',
+"    \ 'R'  : 'R',
+"    \ 'c'  : 'C',
+"    \ 'v'  : 'V',
+"    \ 'V'  : 'V-L',
+"    \ '' : 'V-B',
+"    \ 's'  : 'S',
+"    \ 'S'  : 'S-L',
+"    \ '' : 'S-B',
+"    \ 't'  : 'T',
+"    \ }
 
 Plug 'dense-analysis/ale'
 Plug 'mbbill/undotree'
@@ -333,10 +347,11 @@ Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
 let g:NERDTreeWinSize=70
 "let g:nerdtree_tabs_open_on_console_startup = 1
-"let g:nerdtree_tabs_autofind = 1
+let g:nerdtree_tabs_autofind = 1
 "let g:nerdtree_tabs_focus_on_files = 1
 
 Plug 'vim-test/vim-test'
+Plug 'SirVer/ultisnips'
 
 call plug#end()
 
