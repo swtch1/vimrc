@@ -16,13 +16,21 @@ function cdl() {
   cd "$@" && ll
 }
 
-alias vim='nvim'
+#function vim() {
+#  if [ "$(env | grep VIM)" ]; then
+#    echo "NO"
+#  else
+#    nvim "$@"
+#  fi
+#}
 alias vimt='nvim -c terminal'
 alias vimrc='vim ~/.vimrc'
 alias v='vim'
 alias vt='nvim -c terminal'
+alias vg='nvim -c :G'
 
 alias cdc='cd ~/code'
+alias cds='cd ~/code/ss/ss/'
 alias docker='sudo docker'
 alias rigwake='wakeonlan A8:A1:59:2D:26:60'
 alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)'
@@ -30,7 +38,6 @@ alias tf='terraform'
 alias awslogin='aws sso login --profile dev'
 alias s='speedctl'
 alias gcurl='grpcurl'
-alias cds='cd ~/code/speedscale/'
 alias envm='vim ~/env/dev.env'
 alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
 alias e='exit'
@@ -39,6 +46,7 @@ alias e='exit'
 alias fixme='ag "// FIXME: \(JMT\)"'
 
 alias gp='git pull'
+function gpw() { git --work-tree "$1" pull }
 alias gpsh='git push'
 alias gs='git status'
 alias gc='git checkout'
@@ -49,6 +57,14 @@ alias gd='git diff'
 alias gdc='git diff --color-words'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -- "
 alias gb='for k in $(git branch | sed s/^..//); do echo -e $(git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k --)\\t"$k";done | sort'
+alias gw='git worktree'
+alias gwa='git worktree add'
+function gpa() {
+  for d in $(git worktree list| grep -v '(bare)'| cut -d ' ' -f 1);do
+    echo "worktree: $d"
+    git --work-tree "$d" pull
+  done
+}
 
 
 # kubernetes

@@ -103,6 +103,7 @@ let mapleader = "\<Space>"
 map Q <Nop>
 inoremap <C-@> <C-x><C-o>
 nnoremap <Leader><Esc> :noh<CR>
+nnoremap <Leader>9 :only<CR>
 nnoremap <Leader>1 :q<CR>
 nnoremap <Leader>! :q!<CR>
 "nnoremap <Leader>p :Telescope find_files<CR>
@@ -113,13 +114,12 @@ nnoremap <Leader>v <C-v>
 "make Y copy to the end of the line
 nnoremap Y y$
 " searching should keep the cursor in the same place
-nnoremap n nzz
-nnoremap N Nzz
+"nnoremap n nzt
+"nnoremap N Nzt
 " undo break points..don't undo every damn thing from last insert
 inoremap , ,<c-g>u
 inoremap = =<c-g>u
 inoremap , ,<c-g>u
-" dot should create break point, and also autocomplete
 inoremap . .<c-g>u
 "duplicate (copy) blocks of text
 nnoremap <Leader>cb Va}:t'><CR>
@@ -149,13 +149,13 @@ nnoremap <Leader>th :tabprev<CR>
 nnoremap <Leader>tl :tabnext<CR>
 
 " keymap | location list
-nmap <Leader>n :lnext<CR>
-nmap <Leader>N :lprev<CR>
+nmap <C-j> :lnext<CR>zt
+nmap <C-k> :lprev<CR>zt
 
 " keymap | focus
 nnoremap <Leader>fn :NERDTreeTabsOpen<CR>:NERDTreeFocus<CR>
 nnoremap <Leader>ff :files<CR>
-nnoremap <Leader>fb :Telescope buffers<CR>
+nnoremap <Leader>fb :BuffergatorOpen<CR>
 nnoremap <Leader>ft :TagbarOpenAutoClose<CR>
 nnoremap <Leader>fT :TagbarOpen<CR>
 nnoremap <Leader>fm :MaximizerToggle<CR>
@@ -165,8 +165,8 @@ nmap <Leader>cc :cclose<CR>:lclose<CR>
 nnoremap <Leader>cn :NERDTreeTabsClose<CR>
 
 " keymap | resize
-nmap <Leader>, :15winc<<CR> " \< to move window size left on vsplit
-nmap <Leader>. :15winc><CR> " \> to move window size right on vsplit
+nmap <Leader>, :10winc<<CR> " \< to move window size left on vsplit
+nmap <Leader>. :10winc><CR> " \> to move window size right on vsplit
 nmap <Leader>- :resize -15<CR>
 nmap <Leader>= :resize +15<CR>
 
@@ -175,6 +175,7 @@ autocmd FileType go nnoremap <buffer> <silent> <C-w><C-m> :<C-u>call go#def#Jump
 autocmd FileType go nnoremap <buffer> <silent> <C-w><C-]> :<C-u>call go#def#Jump("split", 0)<CR>
 autocmd FileType go nnoremap <buffer> <silent> <C-w>] :<C-u>call go#def#Jump("split", 0)<CR>
 autocmd FileType go nnoremap <buffer> <silent> <C-t> :<C-U>call go#def#StackPop(v:count1)<cr>
+autocmd FileType go nnoremap <Leader>gu :GoImplements<CR>
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
 autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
 autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
@@ -212,7 +213,8 @@ nnoremap <Leader>Hp :GitGutterPreviewHunk<CR>
 nnoremap <Leader>Hu :GitGutterUndoHunk<CR>
 
 " keymap | commentary
-vnoremap / :Commentary<CR><Esc>
+nnoremap <F4> :Commentary<CR><Esc>
+vnoremap <F4> :Commentary<CR><Esc>
 
 " macros
 let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\" :%w\", err)\<Esc>BBhi"
@@ -226,9 +228,14 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'jeetsukumaran/vim-buffergator'
+let g:buffergator_sort_regime = "mru"
+let g:buffergator_show_full_directory_path = 0
+let g:buffergator_vsplit_size = 120
+let g:buffergator_viewport_split_policy = "R"
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dadbod'
-Plug 'kristijanhusak/vim-dadbod-completion'
+"Plug 'kristijanhusak/vim-dadbod-completion'
 Plug 'ray-x/lsp_signature.nvim'
 Plug 'mhinz/neovim-remote'
 Plug 'skywind3000/vim-terminal-help'
@@ -339,7 +346,7 @@ let g:airline_section_y = '%-0.15{getcwd()}'
 "    \ 't'  : 'T',
 "    \ }
 
-Plug 'dense-analysis/ale'
+"Plug 'dense-analysis/ale'
 Plug 'mbbill/undotree'
 "Plug 'ervandew/supertab'
 
