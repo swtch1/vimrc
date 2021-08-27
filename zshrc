@@ -3,13 +3,14 @@
 KEYTIMEOUT=0
 
 # PATH
-export PATH=$PATH:~/go/bin
+export PATH="$PATH:/usr/local/go/bin"
+export PATH="$PATH:~/go/bin"
 
 # speedctl env vars
 export SPEEDCTL_HOME=/Users/josh/.speedscale
 export PATH=$SPEEDCTL_HOME:$PATH
 
-export EDITOR='vim'
+export EDITOR='nvim'
 
 # cd to a dir and ls -l right after
 function cdl() {
@@ -23,14 +24,16 @@ function cdl() {
 #    nvim "$@"
 #  fi
 #}
+alias vim='nvim'
 alias vimt='nvim -c terminal'
-alias vimrc='vim ~/.vimrc'
-alias v='vim'
+alias vimrc='nvim ~/.vimrc'
+alias v='nvim'
 alias vt='nvim -c terminal'
 alias vg='nvim -c :G'
 
 alias cdc='cd ~/code'
-alias cds='cd ~/code/ss/ss/'
+alias cds='cd ~/code/speedscale/'
+alias cdsm='cd ~/code/ss/ss/master/'
 alias docker='sudo docker'
 alias rigwake='wakeonlan A8:A1:59:2D:26:60'
 alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)'
@@ -38,7 +41,7 @@ alias tf='terraform'
 alias awslogin='aws sso login --profile dev'
 alias s='speedctl'
 alias gcurl='grpcurl'
-alias envm='vim ~/env/dev.env'
+alias envm='drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env'
 alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
 alias e='exit'
 
@@ -65,12 +68,24 @@ function gpa() {
     git --work-tree "$d" pull
   done
 }
+function gpm() {
+  for d in $(git worktree list| grep 'master'| cut -d ' ' -f 1);do
+    echo "worktree: $d"
+    git --work-tree "$d" pull
+  done
+}
 
 
 # kubernetes
 alias k='kubectl'
 alias kx='kubectx'
 alias sns='kubectl config set-context $(kubectl config current-context) --namespace '
+alias kg='k get'
+alias kgp='k get pod'
+alias ka='k apply'
+alias kd='k delete'
+alias kdp='k delete pod'
+alias kl='k logs'
 
 # run base64 easier
 function b64d() {
@@ -80,10 +95,10 @@ function b64d() {
 # run go tests easier
 function t() {
   if [[ -z "$1" ]]; then
-    go test ./...
+    go test -race ./...
     return
   fi
-  go test ./... -run "$1"
+  go test -race ./... -run "$1"
 }
 # run go tests easier.. with file watches
 function tw() {

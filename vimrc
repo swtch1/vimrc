@@ -147,6 +147,7 @@ nnoremap <Leader>tn :tabnew<CR>
 nnoremap <Leader>tf :tabfind
 nnoremap <Leader>th :tabprev<CR>
 nnoremap <Leader>tl :tabnext<CR>
+nnoremap <Leader>tq :tabclose<CR>
 
 " keymap | location list
 nmap <C-j> :lnext<CR>zt
@@ -216,6 +217,14 @@ nnoremap <Leader>Hu :GitGutterUndoHunk<CR>
 nnoremap <F4> :Commentary<CR><Esc>
 vnoremap <F4> :Commentary<CR><Esc>
 
+" keymap | incsearch
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map n  <Plug>(incsearch-nohl-n)
+map N  <Plug>(incsearch-nohl-N)
+map *  <Plug>(incsearch-nohl-*)
+map #  <Plug>(incsearch-nohl-#)
+
 " macros
 let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\" :%w\", err)\<Esc>BBhi"
 let @f="A // FIXME: (JMT) testing"
@@ -228,6 +237,9 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'haya14busa/incsearch.vim'
+let g:incsearch#auto_nohlsearch = 1
+"Plug 'dpelle/vim-languagetool'"maybe later - requires an install of languagetool
 Plug 'jeetsukumaran/vim-buffergator'
 let g:buffergator_sort_regime = "mru"
 let g:buffergator_show_full_directory_path = 0
@@ -269,6 +281,8 @@ Plug 'ervandew/ag'
 "Plug 'nvim-lua/plenary.nvim'
 "Plug 'nvim-telescope/telescope.nvim'
 "Plug 'nvim-telescope/telescope-fzf-native.nvim'
+
+Plug 'shumphrey/fugitive-gitlab.vim' "use :GBrowse to open files in gitlab
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 let g:fzf_buffers_jump = 1
@@ -346,7 +360,7 @@ let g:airline_section_y = '%-0.15{getcwd()}'
 "    \ 't'  : 'T',
 "    \ }
 
-"Plug 'dense-analysis/ale'
+Plug 'dense-analysis/ale'
 Plug 'mbbill/undotree'
 "Plug 'ervandew/supertab'
 
@@ -358,7 +372,7 @@ let g:nerdtree_tabs_autofind = 1
 "let g:nerdtree_tabs_focus_on_files = 1
 
 Plug 'vim-test/vim-test'
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 
 call plug#end()
 
