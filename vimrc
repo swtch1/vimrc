@@ -16,7 +16,7 @@ set updatetime=100
 "set splitbelow
 set splitright
 " ms to wait before waiting for extra keys
-set timeoutlen=750 ttimeoutlen=0
+set timeoutlen=350 ttimeoutlen=0
 set shortmess-=S " show count when searching
 set scrolloff=3
 set visualbell
@@ -102,12 +102,11 @@ let mapleader = "\<Space>"
 " this piece of trash needs to die
 map Q <Nop>
 inoremap <C-@> <C-x><C-o>
-nnoremap <Leader><Esc> :noh<CR>
-nnoremap <Leader>9 :only<CR>
-nnoremap <Leader>1 :q<CR>
-nnoremap <Leader>! :q!<CR>
+nnoremap <Leader>o :only<CR>:noh<CR>
+nnoremap <Leader>q :q<CR>
+nnoremap <Leader>Q :q!<CR>
 "nnoremap <Leader>p :Telescope find_files<CR>
-nnoremap <Leader>p :FZF<CR>
+nnoremap <Leader>p :Files<CR>
 " make saving easier
 nnoremap <Leader>w :w<CR>
 nnoremap <Leader>v <C-v>
@@ -129,15 +128,10 @@ nnoremap <Leader>j <C-W>j
 nnoremap <Leader>k <C-W>k
 nnoremap <Leader>l <C-W>l
 
-nnoremap <Leader>o <C-o>
-nnoremap <Leader>i <C-i>
-
 " keymap | edit
 nnoremap <Leader>ew :e %:p:h
 
 " keymap | buffers
-nnoremap <Leader>q :bd<CR>
-nnoremap <Leader>Q :bd!<CR>
 nnoremap <Leader>bn :bnext<CR>
 nnoremap <Leader>bN :bNext<CR>
 nnoremap <Leader><Space> :e#<CR>" switch to last buffer
@@ -150,26 +144,33 @@ nnoremap <Leader>tl :tabnext<CR>
 nnoremap <Leader>tq :tabclose<CR>
 
 " keymap | location list
-nmap <C-j> :lnext<CR>zt
-nmap <C-k> :lprev<CR>zt
+nmap <C-j> :cnext<CR>zt
+nmap <C-k> :cprev<CR>zt
 
 " keymap | focus
+nnoremap <Leader>fa :Ag 
+" yank current word and paste into Ag
+nnoremap <Leader>fA yiw:Ag <C-r>"<CR>
 nnoremap <Leader>fn :NERDTreeTabsOpen<CR>:NERDTreeFocus<CR>
 nnoremap <Leader>ff :files<CR>
 nnoremap <Leader>fb :BuffergatorOpen<CR>
 nnoremap <Leader>ft :TagbarOpenAutoClose<CR>
 nnoremap <Leader>fT :TagbarOpen<CR>
 nnoremap <Leader>fm :MaximizerToggle<CR>
+nnoremap <Leader>fd :bd<CR>
+nnoremap <Leader>fD :bd!<CR>
 
-" keymap | lists
-nmap <Leader>cc :cclose<CR>:lclose<CR>
-nnoremap <Leader>cn :NERDTreeTabsClose<CR>
+" keymap | run
+nnoremap <Leader>rt :AsyncRun -mode=term -thelp 
+nnoremap <Leader>rr :AsyncRun -mode=term -thelp<Up><CR>
+nnoremap <Leader>rj V:!jq<CR>
+vnoremap <Leader>rj :!jq<CR>
 
 " keymap | resize
-nmap <Leader>, :10winc<<CR> " \< to move window size left on vsplit
-nmap <Leader>. :10winc><CR> " \> to move window size right on vsplit
+nmap <Leader>, :10winc<<CR>" \< to move window size left on vsplit
+nmap <Leader>. :10winc><CR>" \> to move window size right on vsplit
 nmap <Leader>- :resize -15<CR>
-nmap <Leader>= :resize +15<CR>
+nmap <Leader>+ :resize +15<CR>
 
 " keymap | go
 autocmd FileType go nnoremap <buffer> <silent> <C-w><C-m> :<C-u>call go#def#Jump("split", 0)<CR>
@@ -178,6 +179,8 @@ autocmd FileType go nnoremap <buffer> <silent> <C-w>] :<C-u>call go#def#Jump("sp
 autocmd FileType go nnoremap <buffer> <silent> <C-t> :<C-U>call go#def#StackPop(v:count1)<cr>
 autocmd FileType go nnoremap <Leader>gu :GoImplements<CR>
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
+autocmd FileType go nnoremap <Leader>gD :vsp<CR>:GoDef<CR>
+autocmd FileType go nnoremap <Leader>gS :sp<CR>:GoDef<CR>
 autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
 autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
 autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
@@ -202,20 +205,23 @@ autocmd FileType go nnoremap <Leader>dr :GoDebugRestart<CR>
 autocmd FileType go nnoremap <Leader>do :GoDebugStepOut<CR>
 autocmd FileType go nnoremap <Leader>dn :GoDebugNext<CR>
 autocmd FileType go nnoremap <Leader>ds :GoDebugStep<CR>
+" debug run to here
+autocmd FileType go nnoremap <Leader>dh :GoDebugBreakpoint<CR>:GoDebugContinue<CR>:GoDebugBreakpoint<CR>
 autocmd FileType go nnoremap <Leader>dp :GoDebugPrint 
 autocmd FileType go nnoremap <Leader>dq :GoDebugStop<CR>
 "autocmd FileType go nnoremap <Leader>gh :<C-u>call GOVIMHover()<CR>
 
-" keymap | gitgutter
-nnoremap <Leader>Hs :GitGutterStageHunk<CR>
-nnoremap <Leader>Hn :GitGutterNextHunk<CR>
-nnoremap <Leader>HN :GitGutterPrevHunk<CR>
-nnoremap <Leader>Hp :GitGutterPreviewHunk<CR>
-nnoremap <Leader>Hu :GitGutterUndoHunk<CR>
+" keymap | git changes
+nnoremap <Leader>cs :GitGutterStageHunk<CR>
+nnoremap <Leader>cn :GitGutterNextHunk<CR>
+nnoremap <Leader>cN :GitGutterPrevHunk<CR>
+nnoremap <Leader>cd :Gvdiffsplit<CR>
+nnoremap <Leader>co :Gvsplit<CR>
+nnoremap <Leader>cu :GitGutterUndoHunk<CR>
 
 " keymap | commentary
-nnoremap <F4> :Commentary<CR><Esc>
-vnoremap <F4> :Commentary<CR><Esc>
+nnoremap <Leader>/ :Commentary<CR><Esc>
+vnoremap <Leader>/ :Commentary<CR><Esc>
 
 " keymap | incsearch
 map /  <Plug>(incsearch-forward)
@@ -226,9 +232,9 @@ map *  <Plug>(incsearch-nohl-*)
 map #  <Plug>(incsearch-nohl-#)
 
 " macros
-let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\" :%w\", err)\<Esc>BBhi"
+let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\": %w\", err)\<Esc>BBhhi"
 let @f="A // FIXME: (JMT) testing"
-let @p="ifmt.Printf(\" -> DEBUG: %s %+v\\n\", ) // FIXME: (JMT) testing\<Esc>BBBBBi\""
+let @p="ifmt.Printf(\" -> JMTDEBUG: %s: %+v\\n\", ) // FIXME: (JMT) testing\<Esc>BBBBBi\""
 let @d="BveyO// \<Esc>pA "
 
 " tabs for go
@@ -237,6 +243,10 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'mhinz/vim-startify'
+Plug 'yuttie/comfortable-motion.vim'
+Plug 'liuchengxu/vim-which-key'
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
 Plug 'haya14busa/incsearch.vim'
 let g:incsearch#auto_nohlsearch = 1
 "Plug 'dpelle/vim-languagetool'"maybe later - requires an install of languagetool
@@ -247,8 +257,19 @@ let g:buffergator_vsplit_size = 120
 let g:buffergator_viewport_split_policy = "R"
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-dadbod'
+let g:ts = 'postgresql://localhost:5432/external-timescale?user=speedscale&password=079d9b7096130966a090'
 "Plug 'kristijanhusak/vim-dadbod-completion'
-Plug 'ray-x/lsp_signature.nvim'
+Plug 'neovim/nvim-lspconfig'
+"Plug 'ray-x/lsp_signature.nvim'
+" lua <<EOF
+" local golang_setup = {
+"   on_attach = function(client, bufnr)
+"     require "lsp_signature".on_attach()  -- Note: add in lsp client on-attach
+"   end,
+" }
+
+" require'lspconfig'.gopls.setup(golang_setup)
+" EOF
 Plug 'mhinz/neovim-remote'
 Plug 'skywind3000/vim-terminal-help'
 let g:terminal_key = "<c-h>"
@@ -272,20 +293,31 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 let g:go_metalinter_command = 'staticcheck'
 let g:go_debug_log_output = ''
 let g:go_doc_popup_window = 1
+let g:go_rename_command = 'gopls'
 "Plug 'myitcv/govim'
 "call govim#config#Set("ExperimentalProgressPopups", 1)
-
-Plug 'ervandew/ag'
 
 "Plug 'nvim-lua/popup.nvim'
 "Plug 'nvim-lua/plenary.nvim'
 "Plug 'nvim-telescope/telescope.nvim'
 "Plug 'nvim-telescope/telescope-fzf-native.nvim'
-
+"
+Plug 'machakann/vim-highlightedyank' "highlight what you yank
 Plug 'shumphrey/fugitive-gitlab.vim' "use :GBrowse to open files in gitlab
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
 Plug 'tpope/vim-fugitive'
 Plug '907th/vim-auto-save'
@@ -384,3 +416,4 @@ colorscheme gruvbox
 " keep this at the bottom
 hi ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
+

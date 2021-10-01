@@ -1,10 +1,13 @@
 ### personal ###
 
+bindkey "^h" backward-word
+bindkey "^l" forward-word
+
 KEYTIMEOUT=0
 
 # PATH
 export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:~/go/bin"
+export PATH="$PATH:/Users/josh/go/bin"
 
 # speedctl env vars
 export SPEEDCTL_HOME=/Users/josh/.speedscale
@@ -31,6 +34,8 @@ alias v='nvim'
 alias vt='nvim -c terminal'
 alias vg='nvim -c :G'
 
+alias mk='minikube'
+alias agg='ag --go'
 alias cdc='cd ~/code'
 alias cds='cd ~/code/speedscale/'
 alias cdsm='cd ~/code/ss/ss/master/'
@@ -39,14 +44,31 @@ alias rigwake='wakeonlan A8:A1:59:2D:26:60'
 alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)'
 alias tf='terraform'
 alias awslogin='aws sso login --profile dev'
-alias s='speedctl'
 alias gcurl='grpcurl'
-alias envm='drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env'
 alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
+alias envm='(drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env) && envl'
 alias e='exit'
+alias ff="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
+alias mk='microk8s'
+alias dc='docker-compose'
+
+# speedctl
+alias s='speedctl'
+alias soa='s deploy operator -e $(k config current-context) | k apply -f -'
+alias sod='s deploy operator -e $(k config current-context) | k delete -f -'
+
+# task warrior
+alias tk='task'
+alias tkh='tk help | less'
+alias tka='tk active'
+alias tkm='tk modify'
+alias tkls='tk ls'
+alias tkd='tk delete'
+# make taskwarrior annoying
+tk next
 
 # make it easier to spot the testing debug lines I drop
-alias fixme='ag "// FIXME: \(JMT\)"'
+alias fixme='ag "FIXME: \(JMT\)"'
 
 alias gp='git pull'
 function gpw() { git --work-tree "$1" pull }
@@ -82,6 +104,7 @@ alias kx='kubectx'
 alias sns='kubectl config set-context $(kubectl config current-context) --namespace '
 alias kg='k get'
 alias kgp='k get pod'
+alias kgns='kg ns'
 alias ka='k apply'
 alias kd='k delete'
 alias kdp='k delete pod'
@@ -106,11 +129,6 @@ function tw() {
     t $1
     fswatch -1 . > /dev/null
   done
-}
-
-# find files faster
-function ff() {
-  find . -iname "*$1*" | grep -v '.git/'
 }
 
 # know that our terminal is from vim
