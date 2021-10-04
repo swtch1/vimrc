@@ -77,6 +77,9 @@ set ttyfast
 " tab spacing
 autocmd FileType go setlocal tabstop=2
 
+" better window naming
+autocmd BufReadPost,FileReadPost,BufNewFile * call system("tmux rename-window " . expand("%"))
+
 " syntax highlighting
 syntax on
 filetype on
@@ -243,6 +246,7 @@ autocmd FileType go setlocal noexpandtab
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'neoclide/coc.nvim'
 Plug 'mhinz/vim-startify'
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'liuchengxu/vim-which-key'
@@ -376,7 +380,7 @@ Plug 'vim-airline/vim-airline-themes'
 let g:airline_theme='xtermlight'
 "let g:airline_theme='luna'
 "let g:airline_theme='base16_heetch'
-let g:airline_section_y = '%-0.15{getcwd()}'
+"let g:airline_section_y = '%-0.15{getcwd()}'
 "let g:airline_mode_map = {
 "    \ '__' : '--',
 "    \ 'n'  : 'N',
@@ -416,4 +420,6 @@ colorscheme gruvbox
 " keep this at the bottom
 hi ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
+
+" experimental -----------------------
 
