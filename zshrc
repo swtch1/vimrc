@@ -56,6 +56,7 @@ alias dc='docker-compose'
 alias s='speedctl'
 alias soa='s deploy operator -e $(k config current-context) | k apply -f -'
 alias sod='s deploy operator -e $(k config current-context) | k delete -f -'
+export PROD_USER_ID='bec83d8b-2c15-4e2e-a0a5-7a90193665f4'
 
 # task warrior
 alias tk='task'

@@ -18,6 +18,7 @@ set splitright
 " ms to wait before waiting for extra keys
 set timeoutlen=350 ttimeoutlen=0
 set shortmess-=S " show count when searching
+set shortmess+=c
 set scrolloff=3
 set visualbell
 set history=10000
@@ -75,7 +76,7 @@ set lazyredraw
 set ttyfast
 
 " tab spacing
-autocmd FileType go setlocal tabstop=2
+autocmd FileType go setlocal tabstop=4
 
 " better window naming
 autocmd BufReadPost,FileReadPost,BufNewFile * call system("tmux rename-window " . expand("%"))
@@ -175,21 +176,28 @@ nmap <Leader>. :10winc><CR>" \> to move window size right on vsplit
 nmap <Leader>- :resize -15<CR>
 nmap <Leader>+ :resize +15<CR>
 
-" keymap | go
-autocmd FileType go nnoremap <buffer> <silent> <C-w><C-m> :<C-u>call go#def#Jump("split", 0)<CR>
-autocmd FileType go nnoremap <buffer> <silent> <C-w><C-]> :<C-u>call go#def#Jump("split", 0)<CR>
-autocmd FileType go nnoremap <buffer> <silent> <C-w>] :<C-u>call go#def#Jump("split", 0)<CR>
-autocmd FileType go nnoremap <buffer> <silent> <C-t> :<C-U>call go#def#StackPop(v:count1)<cr>
-autocmd FileType go nnoremap <Leader>gu :GoImplements<CR>
+" keymap | navigation
+nnoremap <silent><nowait> <Leader>a  :<C-u>CocList diagnostics<cr>
+" find symbols in the current document
+nnoremap <silent><nowait> <space>s  :<C-u>CocList outline<cr>
+" find symbols in the workspace
+nnoremap <silent><nowait> <Leader>S  :<C-u>CocList -I symbols<cr>
+autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
+" nnoremap <Leader>gi :call <SID>show_documentation()<CR>
+" autocmd FileType go nnoremap <Leader>gu :GoImplements<CR>
+nmap <Leader>gu <Plug>(coc-implementation)
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
+nmap <Leader>gd <Plug>(coc-definition)
+" autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
+nmap <Leader>gy <Plug>(coc-type-definition)
+" autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>
+nmap <Leader>gr <Plug>(coc-references)
+autocmd FileType go nnoremap <Leader>gn :GoRename<CR>
+" nnoremap <leader>gn <Plug>(coc-rename)
 autocmd FileType go nnoremap <Leader>gD :vsp<CR>:GoDef<CR>
 autocmd FileType go nnoremap <Leader>gS :sp<CR>:GoDef<CR>
 autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
-autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
-autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
 autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>
-autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>
-autocmd FileType go nnoremap <Leader>gn :GoRename<CR>
 autocmd FileType go nnoremap <Leader>gc :GoMetaLinter<CR>
 autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
 autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
@@ -216,11 +224,15 @@ autocmd FileType go nnoremap <Leader>dq :GoDebugStop<CR>
 
 " keymap | git changes
 nnoremap <Leader>cs :GitGutterStageHunk<CR>
-nnoremap <Leader>cn :GitGutterNextHunk<CR>
-nnoremap <Leader>cN :GitGutterPrevHunk<CR>
+nnoremap <Leader>cc :GitGutterNextHunk<CR>
 nnoremap <Leader>cd :Gvdiffsplit<CR>
 nnoremap <Leader>co :Gvsplit<CR>
 nnoremap <Leader>cu :GitGutterUndoHunk<CR>
+
+" keymap | coc
+nnoremap <Leader>cr :CocListResume<CR>
+nnoremap <Leader>cn :CocNext<CR>
+nnoremap <Leader>cN :CocPrev<CR>
 
 " keymap | commentary
 nnoremap <Leader>/ :Commentary<CR><Esc>
@@ -247,6 +259,13 @@ autocmd FileType go setlocal noexpandtab
 call plug#begin('~/.vim/plugged')
 
 Plug 'neoclide/coc.nvim'
+" fold current buffer
+command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 Plug 'mhinz/vim-startify'
 Plug 'yuttie/comfortable-motion.vim'
 Plug 'liuchengxu/vim-which-key'
@@ -284,10 +303,10 @@ let g:terminal_cwd = 0
 " hide terminal in buffers list
 let g:terminal_list = 0
 Plug 'skywind3000/asyncrun.vim'
-Plug 'ervandew/supertab'
-let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
-let g:SuperTabLongestHighlight = 1
-let g:SuperTabLongestEnhanced = 1
+" Plug 'ervandew/supertab'
+" let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+" let g:SuperTabLongestHighlight = 1
+" let g:SuperTabLongestEnhanced = 1
 Plug 'szw/vim-maximizer'
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_map_keys = 0
