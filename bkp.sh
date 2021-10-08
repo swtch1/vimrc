@@ -11,6 +11,9 @@ cp ~/.config/karabiner/karabiner.json ./karabiner.json
 echo 'copying zshrc...'
 grep '### personal ###' ~/.zshrc -A 1000 > zshrc
 
+echo 'copying gitconfig...'
+cp ~/.gitconfig ./gitconfig
+
 echo '--- done ---'
 echo
 git add --all

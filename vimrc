@@ -137,7 +137,7 @@ nnoremap <Leader>ew :e %:p:h
 
 " keymap | buffers
 nnoremap <Leader>bn :bnext<CR>
-nnoremap <Leader>bN :bNext<CR>
+nnoremap <Leader>bb :bNext<CR>
 nnoremap <Leader><Space> :e#<CR>" switch to last buffer
 
 " keymap | tabs
@@ -184,13 +184,10 @@ nnoremap <silent><nowait> <space>s  :<C-u>CocList outline<cr>
 nnoremap <silent><nowait> <Leader>S  :<C-u>CocList -I symbols<cr>
 autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
 " nnoremap <Leader>gi :call <SID>show_documentation()<CR>
-" autocmd FileType go nnoremap <Leader>gu :GoImplements<CR>
 nmap <Leader>gu <Plug>(coc-implementation)
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
 nmap <Leader>gd <Plug>(coc-definition)
-" autocmd FileType go nnoremap <Leader>gy :GoDefType<CR>
 nmap <Leader>gy <Plug>(coc-type-definition)
-" autocmd FileType go nnoremap <Leader>gr :GoReferrers<CR>
 nmap <Leader>gr <Plug>(coc-references)
 autocmd FileType go nnoremap <Leader>gn :GoRename<CR>
 " nnoremap <leader>gn <Plug>(coc-rename)
@@ -293,10 +290,12 @@ Plug 'neovim/nvim-lspconfig'
 
 " require'lspconfig'.gopls.setup(golang_setup)
 " EOF
+
+" Plug 'weynhamz/vim-plugin-minibufexpl'
 Plug 'mhinz/neovim-remote'
 Plug 'skywind3000/vim-terminal-help'
 let g:terminal_key = "<c-h>"
-let g:terminal_height = 30
+let g:terminal_height = 20
 let g:terminal_pos = "topleft"
 let g:terminal_close = 1
 let g:terminal_cwd = 0
@@ -391,29 +390,16 @@ Plug 'alfredodeza/jacinto.vim'
 "  autocmd FileType json set foldmethod=syntax
 "augroup END
 
-Plug 'bling/vim-bufferline'
-let g:bufferline_echo = 0 " dont let bufferline overwrite command line
+" Plug 'bling/vim-bufferline'
+" let g:bufferline_echo = 0 " dont let bufferline overwrite command line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 "let g:airline_theme='term'
 let g:airline_theme='xtermlight'
 "let g:airline_theme='luna'
 "let g:airline_theme='base16_heetch'
-"let g:airline_section_y = '%-0.15{getcwd()}'
-"let g:airline_mode_map = {
-"    \ '__' : '--',
-"    \ 'n'  : 'N',
-"    \ 'i'  : 'I',
-"    \ 'R'  : 'R',
-"    \ 'c'  : 'C',
-"    \ 'v'  : 'V',
-"    \ 'V'  : 'V-L',
-"    \ '' : 'V-B',
-"    \ 's'  : 'S',
-"    \ 'S'  : 'S-L',
-"    \ '' : 'S-B',
-"    \ 't'  : 'T',
-"    \ }
+"let g:airline_statusline_ontop=1
+let g:airline#extensions#tabline#enabled = 1
 
 Plug 'dense-analysis/ale'
 Plug 'mbbill/undotree'
