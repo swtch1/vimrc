@@ -45,12 +45,15 @@ alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut
 alias tf='terraform'
 alias awslogin='aws sso login --profile dev'
 alias gcurl='grpcurl'
-alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
-alias envm='(drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env) && envl'
 alias e='exit'
 alias ff="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
 alias mk='microk8s'
 alias dc='docker-compose'
+
+# environment
+alias envm='(drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env) && envl'
+alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
+envl # load the env every time
 
 # speedctl
 alias s='speedctl'
@@ -71,6 +74,7 @@ tk next
 # make it easier to spot the testing debug lines I drop
 alias fixme='ag "FIXME: \(JMT\)"'
 
+export REVIEW_BASE='master'
 alias gp='git pull'
 function gpw() { git --work-tree "$1" pull }
 alias gpsh='git push'
@@ -81,6 +85,7 @@ alias grb='git rebase origin/master'
 alias gsh='git stash'
 alias gpu='git push --set-upstream origin $(git rev-parse --abbrev-ref HEAD)'
 alias gd='git diff'
+alias gdm='git diff origin/master..HEAD'
 alias gdc='git diff --color-words'
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -- "
 alias gb='for k in $(git branch | sed s/^..//); do echo -e $(git log -1 --pretty=format:"%Cgreen%ci %Cblue%cr%Creset" $k --)\\t"$k";done | sort'
@@ -98,6 +103,9 @@ function gpm() {
     git --work-tree "$d" pull
   done
 }
+# review helpers
+# review one
+alias gro="vim -p +\"tabdo Gdiffsplit master\"" # files go after
 
 
 # kubernetes
@@ -120,10 +128,10 @@ function b64d() {
 # run go tests easier
 function t() {
   if [[ -z "$1" ]]; then
-    go test -race ./...
+    go test -timeout=15s -race  ./...
     return
   fi
-  go test -race ./... -run "$1"
+  go test -timeout=5s -race ./... -run "$1"
 }
 # run go tests easier.. with file watches
 function tw() {
