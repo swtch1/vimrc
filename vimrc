@@ -190,6 +190,7 @@ Plug 'mbbill/undotree'
 
 Plug 'scrooloose/nerdtree'
 let g:NERDTreeWinSize=70
+let NERDTreeQuitOnOpen=1
 
 Plug 'vim-test/vim-test'
 
