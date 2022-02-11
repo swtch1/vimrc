@@ -429,4 +429,108 @@ nmap <Leader>dI <Plug>VimspectorBalloonEval
 xmap <Leader>dI <Plug>VimspectorBalloonEval
 nmap <Leader>dc <Plug>VimspectorToggleConditionalBreakpoint
 
+" " Shaun's fold syntax - see if we like it
+" set foldenable
+" set foldcolumn=1
+" set foldlevel=99
+" set foldopen=block,tag,percent,mark,quickfix
+" set foldmethod=syntax
+" set foldtext=FoldText()
+
+" " func: FoldText() {{{
+" " inspiration from: https://github.com/jrudess/vim-foldtext/blob/master/plugin/foldtext.vim
+" function! FoldText(full=1) abort
+"     " shorthand
+"     let l:fs = v:foldstart
+"     let l:fe = v:foldend
+
+"     " separator between start/end
+"     let l:sep = '  '
+
+"     let l:start = getline(v:foldstart)
+"     let l:end = getline(v:foldend)
+
+"     if a:full == 0
+"         let l:end = ''
+"         let l:sep = ''
+"     endif
+
+"     " special case: if we have folding set on a marker, don't include it
+"     if &foldmethod == 'marker'
+"         let l:markers = split(&foldmarker, ',')
+
+"         let l:start = substitute(l:start, '[\s\t]*'.l:markers[0].'$', '', 'g')
+"         let l:end = ''
+"         let l:sep = ''
+"     endif
+
+"     " the whitespace patterns
+"     let l:wsLead = '^[\s\t]*'
+"     let l:wsTrail = '[\s\t]*$'
+
+"     " get each line with trailing whitespace removed
+"     let l:start = substitute(l:start l:wsTrail, '', 'g')
+"     let l:end = substitute(l:end, l:wsTrail, '', 'g')
+
+"     " for the start, convert leading tabs to spaces
+"     let l:lspaces = repeat(' ', &tabstop)
+"     let l:start = substitute(matchstr(l:start, l:wsLead), '\t', l:lspaces, 'g') . substitute(l:start, l:wsLead, '', 'g')
+
+"     " for the end, strip leading whitespace
+"     let l:end = substitute(l:end, '^[\s\t]*', '', 'g')
+
+"     " put them together to create the snippet
+"     let l:snippet = l:start . l:sep . l:end
+"     let l:info= '[' . (v:foldend - v:foldstart). ']'
+
+"     " figure out the ellipsis
+"     let l:signwidth = 2
+"     let l:width = winwidth(0) - &numberwidth - &foldcolumn - l:signwidth
+"     let l:fill = repeat('.', (l:width - len(l:snippet) - len(l:info) - 3))
+
+"     return l:snippet . ' ' . l:fill . ' ' . l:info
+
+" endfunction
+" " }}}
+
+" " func: YamlFolds() {{{
+" function! YamlFolds()
+"     " FIXME: the bug here is with lists where the bullet `-` is at the same
+"     " indent level as the parent element
+"     let previous_level = indent(prevnonblank(v:lnum - 1)) / &shiftwidth
+"     let current_level = indent(v:lnum) / &shiftwidth
+"     let next_level = indent(nextnonblank(v:lnum + 1)) / &shiftwidth
+
+"     if getline(v:lnum + 1) =~ '^\s*$'
+"         return '='
+"     elseif current_level < next_level
+"         return next_level
+"     elseif current_level > next_level
+"         return ('s' . (current_level - next_level))
+"     elseif current_level == previous_level
+"         return '='
+"     endif
+
+"     return next_level
+" endfunction
+" " }}}
+
+" hi Folded ctermbg=NONE guibg=NONE guifg=#B688E1
+
+" " toggle shortcut
+" nnoremap <Leader>z za
+" nnoremap <Leader>Z zA
+" nnoremap <Leader><Leader> za
+
+" " folding overrides {{{
+" if &diff
+"     set foldmethod=diff
+" endif
+
+" aug custom-folding | au!
+"     au FileType proto setlocal foldmethod=marker foldmarker={,}
+"     au FileType yaml setlocal foldmethod=expr foldexpr=YamlFolds() foldtext=FoldText(0)
+" aug END
+" " }}}
+
 

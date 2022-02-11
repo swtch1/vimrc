@@ -83,7 +83,7 @@ export REVIEW_BASE='master'
 alias gp='git pull'
 function gpw() { git --work-tree "$1" pull }
 alias gpsh='git push'
-alias gs='git status'
+alias gs='git status -s && git status | ag --no-color "git push"'
 alias gc='git checkout'
 alias gcm='git commit -m'
 alias grb='git rebase origin/master'
