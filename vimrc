@@ -85,6 +85,35 @@ filetype indent on
 " nvim terminal
 tnoremap <Esc> <C-\><C-n>
 
+" treesitter setup - for lua
+" use { 'nvim-treesitter/nvim-treesitter', run = ':TSUpdate' }  -- Highlighting etc
+
+" treesitter config - for lua
+" require'nvim-treesitter.configs'.setup {
+"   ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+"   -- ignore_install = { "javascript" }, -- List of parsers to ignore installing
+"   highlight = {
+"     enable = true,              -- false will disable the whole extension
+"     -- disable = { "c", "rust" },  -- list of language that will be disabled
+"   },
+"   incremental_selection = {
+"     enable = true,
+"     keymaps = {
+"       init_selection = "gnn",
+"       node_incremental = "grn",
+"       scope_incremental = "grc",
+"       node_decremental = "grm",
+"     },
+"   },
+" }
+
+" re-evaluate suntax on open and save
+augroup fixgosyntax
+  autocmd!
+  autocmd BufEnter * syntax sync fromstart
+  autocmd BufWritePre *.go syntax sync fromstart
+augroup end
+
 " plugins
 call plug#begin('~/.vim/plugged')
 
@@ -326,7 +355,9 @@ nnoremap <Leader>fr :Startify<CR>
 nnoremap <Leader>fa :Ag 
 " yank current word and paste into Ag
 nnoremap <Leader>fA yiw:Ag <C-r>"<CR>
+
 nnoremap <Leader>fF :Ag FIXME: \(JMT\)<CR>
+nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
 nnoremap <Leader>rt :AsyncRun -mode=term -thelp 
@@ -349,6 +380,9 @@ map n  <Plug>(incsearch-nohl-n)
 map N  <Plug>(incsearch-nohl-N)
 map *  <Plug>(incsearch-nohl-*)
 map #  <Plug>(incsearch-nohl-#)
+
+" rust
+autocmd FileType rs nnoremap <Leader>w :rustfmt %:w<CR>
 
 " keymap | navigation
 nnoremap <silent><nowait> <Leader>a  :<C-u>CocList diagnostics<cr>
