@@ -27,12 +27,24 @@ set completeopt=menuone,menu,longest,preview
 set wildmenu
 set wildmode=longest,list,full
 set mouse=a
+" set spell spelllang=en_us
+" set so=999 " cursor always in center of screen
+
 
 " allow backspace to delete indentation and inserted text
 set backspace=indent,eol,start
 
 " remap leader
 let mapleader = "\<Space>"
+
+" ctrl-e and ctrl-y moves cursor too
+function! s:Saving_scroll(cmd)
+  let save_scroll = &scroll
+  execute 'normal! ' . a:cmd
+  let &scroll = save_scroll
+endfunction
+nnoremap <C-y> :call <SID>Saving_scroll("1<C-V><C-D>")<CR>
+nnoremap <C-e> :call <SID>Saving_scroll("1<C-V><C-U>")<CR>
 
 " remember my buffers
 exec 'set viminfo=%,' . &viminfo
@@ -177,6 +189,9 @@ let g:go_metalinter_autosave=0
 let g:go_code_completion_icase = 1
 let g:go_gopls_use_placeholders = "gopls"
 let g:go_auto_type_info=0 " auto show signature
+let g:go_imports_mode='gopls'
+" let g:go_imports_autosave=1
+" silent! let g:go_gopls_local=trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}'))
 "let g:go_auto_sameids = 1
 "let g:go_list_height = 25
 
@@ -208,13 +223,39 @@ Plug 'shumphrey/fugitive-gitlab.vim' "use :GBrowse to open files in gitlab
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline#extensions#tabline#enabled = 1
+" don't display git stuff
+let g:airline_section_b=''
+" don't display encoding
+let g:airline_section_y=''
+" don't display file progress
+let g:airline_section_z=''
+let g:airline#extensions#hunks#enabled = 0
+" don't display mode
+let g:airline_mode_map = {
+    \ '__'     : '',
+    \ 'c'      : '',
+    \ 'i'      : '',
+    \ 'ic'     : '',
+    \ 'ix'     : '',
+    \ 'n'      : '',
+    \ 'multi'  : '',
+    \ 'ni'     : '',
+    \ 'no'     : '',
+    \ 'R'      : '',
+    \ 'Rv'     : '',
+    \ 's'      : '',
+    \ 'S'      : '',
+    \ ''     : '',
+    \ 't'      : '',
+    \ 'v'      : '',
+    \ 'V'      : '',
+    \ ''     : '',
+    \ }
 let g:airline_theme='xtermlight'
 "let g:airline_theme='term'
 "let g:airline_theme='luna'
 "let g:airline_theme='base16_heetch'
-"let g:airline_statusline_ontop=1
 
-Plug 'dense-analysis/ale'
 Plug 'mbbill/undotree'
 
 Plug 'scrooloose/nerdtree'
@@ -235,7 +276,7 @@ let g:buffergator_suppress_keymaps = 1
 let g:buffergator_sort_regime = "mru"
 let g:buffergator_show_full_directory_path = 0
 let g:buffergator_vsplit_size = 120
-let g:buffergator_viewport_split_policy = "R"
+let g:buffergator_viewport_split_policy = "L"
 
 Plug 'neoclide/coc.nvim'
 " fold current buffer
@@ -290,8 +331,6 @@ call plug#end()
 nnoremap <Leader>w :w<CR>
 " this piece of trash needs to die
 map Q <Nop>
-" don't add c operations to register
-nnoremap c "0c
 
 inoremap <C-@> <C-x><C-o>
 nnoremap <Leader>o :only<CR>:noh<CR>
@@ -360,10 +399,11 @@ nnoremap <Leader>fF :Ag FIXME: \(JMT\)<CR>
 nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
-nnoremap <Leader>rt :AsyncRun -mode=term -thelp 
-nnoremap <Leader>rr :AsyncRun -mode=term -thelp<Up><CR>
+nnoremap <Leader>rt :AsyncRun -mode=term 
+nnoremap <Leader>rr :AsyncRun -mode=term <Up><CR>
 nnoremap <Leader>rj V:!jq<CR>
 vnoremap <Leader>rj :!jq<CR>
+" nnoremap <Leader>ra :ALEReset<CR>
 
 " keymap | resize
 nmap <Leader>, :10winc<<CR>
@@ -421,6 +461,8 @@ autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
 nnoremap <Leader>dd :call vimspector#Launch()<CR>
 autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
 autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
+autocmd FileType go nnoremap <Leader>go :AsyncRun -mode=term go doc %:p:h<CR>
+autocmd FileType go nnoremap <Leader>gO :AsyncRun -mode=term go doc -all %:p:h<CR>
 nnoremap <Leader>db :call vimspector#ToggleBreakpoint()<CR>
 nnoremap <Leader>d<space> :call vimspector#Continue()<CR>
 nnoremap <Leader>do :call vimspector#StepOut()<CR>
@@ -450,6 +492,7 @@ let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\": %w\", err)\<Esc
 let @f="A // FIXME: (JMT) testing"
 let @p="ifmt.Printf(\" -> JMTDEBUG: %s: %+v\\n\", ) // FIXME: (JMT) testing\<Esc>BBBBBi\""
 let @d="lBveyO// \<Esc>pA "
+let @t="Afunc Test(t *testing.T) {\<CR>for _, tt := range []struct {\<CR> name    string \<CR> }{ \<CR> {}, \<CR> } { \<CR> t.Run(tt.name, func(t *testing.T) { \<CR>  \<CR> }) \<CR> } \<CR> }"
 
 " tabs for go
 autocmd FileType go setlocal noexpandtab
@@ -463,108 +506,12 @@ nmap <Leader>dI <Plug>VimspectorBalloonEval
 xmap <Leader>dI <Plug>VimspectorBalloonEval
 nmap <Leader>dc <Plug>VimspectorToggleConditionalBreakpoint
 
-" " Shaun's fold syntax - see if we like it
-" set foldenable
-" set foldcolumn=1
-" set foldlevel=99
-" set foldopen=block,tag,percent,mark,quickfix
-" set foldmethod=syntax
-" set foldtext=FoldText()
+function! s:decoratedYank()
+    redir @n | silent! :'<,'>number | redir END
+    let filename=expand("%")
+    let decoration=repeat('-', len(filename)+1)
+    let @*=decoration . "\n" . filename . ':' . "\n" . decoration . "\n" . @n
+endfunction
 
-" " func: FoldText() {{{
-" " inspiration from: https://github.com/jrudess/vim-foldtext/blob/master/plugin/foldtext.vim
-" function! FoldText(full=1) abort
-"     " shorthand
-"     let l:fs = v:foldstart
-"     let l:fe = v:foldend
-
-"     " separator between start/end
-"     let l:sep = '  '
-
-"     let l:start = getline(v:foldstart)
-"     let l:end = getline(v:foldend)
-
-"     if a:full == 0
-"         let l:end = ''
-"         let l:sep = ''
-"     endif
-
-"     " special case: if we have folding set on a marker, don't include it
-"     if &foldmethod == 'marker'
-"         let l:markers = split(&foldmarker, ',')
-
-"         let l:start = substitute(l:start, '[\s\t]*'.l:markers[0].'$', '', 'g')
-"         let l:end = ''
-"         let l:sep = ''
-"     endif
-
-"     " the whitespace patterns
-"     let l:wsLead = '^[\s\t]*'
-"     let l:wsTrail = '[\s\t]*$'
-
-"     " get each line with trailing whitespace removed
-"     let l:start = substitute(l:start l:wsTrail, '', 'g')
-"     let l:end = substitute(l:end, l:wsTrail, '', 'g')
-
-"     " for the start, convert leading tabs to spaces
-"     let l:lspaces = repeat(' ', &tabstop)
-"     let l:start = substitute(matchstr(l:start, l:wsLead), '\t', l:lspaces, 'g') . substitute(l:start, l:wsLead, '', 'g')
-
-"     " for the end, strip leading whitespace
-"     let l:end = substitute(l:end, '^[\s\t]*', '', 'g')
-
-"     " put them together to create the snippet
-"     let l:snippet = l:start . l:sep . l:end
-"     let l:info= '[' . (v:foldend - v:foldstart). ']'
-
-"     " figure out the ellipsis
-"     let l:signwidth = 2
-"     let l:width = winwidth(0) - &numberwidth - &foldcolumn - l:signwidth
-"     let l:fill = repeat('.', (l:width - len(l:snippet) - len(l:info) - 3))
-
-"     return l:snippet . ' ' . l:fill . ' ' . l:info
-
-" endfunction
-" " }}}
-
-" " func: YamlFolds() {{{
-" function! YamlFolds()
-"     " FIXME: the bug here is with lists where the bullet `-` is at the same
-"     " indent level as the parent element
-"     let previous_level = indent(prevnonblank(v:lnum - 1)) / &shiftwidth
-"     let current_level = indent(v:lnum) / &shiftwidth
-"     let next_level = indent(nextnonblank(v:lnum + 1)) / &shiftwidth
-
-"     if getline(v:lnum + 1) =~ '^\s*$'
-"         return '='
-"     elseif current_level < next_level
-"         return next_level
-"     elseif current_level > next_level
-"         return ('s' . (current_level - next_level))
-"     elseif current_level == previous_level
-"         return '='
-"     endif
-
-"     return next_level
-" endfunction
-" " }}}
-
-" hi Folded ctermbg=NONE guibg=NONE guifg=#B688E1
-
-" " toggle shortcut
-" nnoremap <Leader>z za
-" nnoremap <Leader>Z zA
-" nnoremap <Leader><Leader> za
-
-" " folding overrides {{{
-" if &diff
-"     set foldmethod=diff
-" endif
-
-" aug custom-folding | au!
-"     au FileType proto setlocal foldmethod=marker foldmarker={,}
-"     au FileType yaml setlocal foldmethod=expr foldexpr=YamlFolds() foldtext=FoldText(0)
-" aug END
-" " }}}
-
+vn <C-y> :call <SID>decoratedYank()<CR>
 
