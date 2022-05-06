@@ -37,14 +37,14 @@ set backspace=indent,eol,start
 " remap leader
 let mapleader = "\<Space>"
 
-" ctrl-e and ctrl-y moves cursor too
-function! s:Saving_scroll(cmd)
-  let save_scroll = &scroll
-  execute 'normal! ' . a:cmd
-  let &scroll = save_scroll
-endfunction
-nnoremap <C-y> :call <SID>Saving_scroll("1<C-V><C-D>")<CR>
-nnoremap <C-e> :call <SID>Saving_scroll("1<C-V><C-U>")<CR>
+" " ctrl-e and ctrl-y moves cursor too
+" function! s:Saving_scroll(cmd)
+"   let save_scroll = &scroll
+"   execute 'normal! ' . a:cmd
+"   let &scroll = save_scroll
+" endfunction
+" nnoremap <C-y> :call <SID>Saving_scroll("1<C-V><C-U>")<CR>
+" nnoremap <C-e> :call <SID>Saving_scroll("1<C-V><C-D>")<CR>
 
 " remember my buffers
 exec 'set viminfo=%,' . &viminfo
@@ -56,7 +56,6 @@ au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal! g
 set maxmempattern=1048576
 
 " properly handle colors in tmux
-"set background=light
 set t_Co=256
 set t_ut=
 
@@ -129,8 +128,6 @@ augroup end
 " plugins
 call plug#begin('~/.vim/plugged')
 
-Plug 'morhetz/gruvbox'
-
 Plug 'mhinz/vim-startify'
 let g:startify_change_to_dir = 0
 let g:startify_bookmarks = [ {'v': '~/.vimrc'}, {'z': '~/.zshrc'} ]
@@ -195,27 +192,11 @@ let g:go_imports_mode='gopls'
 "let g:go_auto_sameids = 1
 "let g:go_list_height = 25
 
-" Plug 'mattesgroeger/vim-bookmarks' " why doesn't it like ... work?
-" let g:bookmark_save_per_working_dir = 1
-" let g:bookmark_no_default_key_mappings = 1
-" let g:bookmark_highlight_lines = 1
-" let g:bookmark_show_warning = 0
-" let g:bookmark_show_toggle_warning = 0
-" let g:bookmark_disable_ctrlp = 1
-
 Plug 'andrewradev/simple_bookmarks.vim'
 let g:simple_bookmarks_signs = 1
 nnoremap <Leader>ma :Bookmark 
 nnoremap <Leader>md :CopenBookmarks<CR> :DelBookmark 
 nnoremap <Leader>mm :CopenBookmarks<CR> 
-
-Plug 'nvim-lua/plenary.nvim'
-
-" Plug 'ThePrimeagen/harpoon'
-" nmap <Leader>ma :lua require("harpoon.mark").add_file()<CR>
-" nmap <Leader>mm :lua require("harpoon.ui").toggle_quick_menu()<CR>
-
-Plug 'phaazon/hop.nvim'
 
 Plug 'tpope/vim-fugitive'
 Plug 'shumphrey/fugitive-gitlab.vim' "use :GBrowse to open files in gitlab
@@ -223,12 +204,9 @@ Plug 'shumphrey/fugitive-gitlab.vim' "use :GBrowse to open files in gitlab
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 let g:airline#extensions#tabline#enabled = 1
-" don't display git stuff
-let g:airline_section_b=''
-" don't display encoding
-let g:airline_section_y=''
-" don't display file progress
-let g:airline_section_z=''
+let g:airline_section_b='' " don't display git stuff
+let g:airline_section_y='' " don't display encoding
+let g:airline_section_z='' " don't display file progress
 let g:airline#extensions#hunks#enabled = 0
 " don't display mode
 let g:airline_mode_map = {
@@ -261,8 +239,6 @@ Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
 let g:NERDTreeWinSize=70
 let NERDTreeQuitOnOpen=1
-
-Plug 'vim-test/vim-test'
 
 Plug 'SirVer/ultisnips'
 let g:UltiSnipsExpandTrigger='<F5>'
@@ -297,32 +273,32 @@ let g:terminal_close = 1
 let g:terminal_cwd = 0
 let g:terminal_list = 0 " hide terminal in buffers list
 Plug 'skywind3000/asyncrun.vim'
-" Plug 'mhinz/neovim-remote'
 
 Plug 'szw/vim-maximizer'
 
 Plug 'airblade/vim-gitgutter'
 let g:gitgutter_map_keys = 0
 
-"Plug 'nvim-lua/popup.nvim'
-
-"Plug 'nvim-telescope/telescope.nvim'
-"Plug 'nvim-telescope/telescope-fzf-native.nvim'
-
 " Plug 'tpope/vim-dadbod'
 " let g:ts = 'postgresql://localhost:5432/external-timescale?user=speedscale&password=079d9b7096130966a090'
 "Plug 'kristijanhusak/vim-dadbod-completion'
 
 " colorscheme
+set background=dark
 " Plug 'ray-x/aurora'
 set termguicolors
-" colorscheme aurora
+" == DARK ==
+" colorscheme aetrora
 " source ~/.vim/plugged/aurora/colors/aurora.vim
-" Plug 'drewtempelmeyer/palenight.vim'
-" source ~/.vim/plugged/palenight.vim/colors/palenight.vim
 " colorscheme palenight
+Plug 'morhetz/gruvbox'
 source ~/.vim/plugged/gruvbox/colors/gruvbox.vim
 " colorscheme gruvbox
+" == LIGHT ==
+" Plug 'chasinglogic/modus-themes-vim'
+" source ~/.vim/plugged/modus-themes-vim/colors/modus-operandi.vim
+" Plug 'datMaffin/vim-colors-bionik'
+" source ~/.vim/plugged/vim-colors-bionik/colors/bionik.vim
 
 call plug#end()
 

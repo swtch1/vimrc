@@ -1,5 +1,10 @@
 ### personal ###
 
+# zsh-autocomplete
+# source /Users/josh/code/zsh-autocomplete/zsh-autocomplete.plugin.zsh
+# zstyle ':autocomplete:*' min-delay 0.25
+# zstyle ':autocomplete:*' no
+
 bindkey "^h" backward-word
 bindkey "^l" forward-word
 
