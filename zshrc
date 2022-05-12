@@ -45,7 +45,7 @@ alias cdc='cd ~/code'
 alias cds='cd ~/code/speedscale/'
 alias cdsm='cd ~/code/ss/ss/master/'
 alias rigwake='wakeonlan A8:A1:59:2D:26:60'
-alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)'
+# alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)' # for vscode
 alias tf='terraform'
 alias sk='skaffold'
 alias awslogin='aws sso login --profile dev'
@@ -69,8 +69,8 @@ alias ss='speedscale'
 alias sm='speedmgmt'
 alias soa='s deploy operator -e $(k config current-context) | k apply -f -'
 alias soax='s deploy operator -e $(k config current-context) -X | k apply -f -'
-alias sod='s deploy operator -e $(k config current-context) | k delete -f -'
-alias sodx='s deploy operator -e $(k config current-context) -X | k delete -f -'
+alias sod='s deploy operator -e $(k config current-context) | k delete -n speedscale -f -'
+alias sodx='s deploy operator -e $(k config current-context) -X | k delete -n speedscale -f -'
 export PROD_USER_ID='bec83d8b-2c15-4e2e-a0a5-7a90193665f4'
 
 # task warrior
@@ -125,6 +125,7 @@ alias gr='git reviewone'
 
 
 # kubernetes
+source <(kubectl completion zsh)
 alias k='kubectl'
 alias wk='watch kubectl'
 alias kx='kubectx'
@@ -179,16 +180,6 @@ if [ -f '/usr/local/google-cloud-sdk/path.zsh.inc' ]; then . '/usr/local/google-
 # The next line enables shell command completion for gcloud.
 if [ -f '/usr/local/google-cloud-sdk/completion.zsh.inc' ]; then . '/usr/local/google-cloud-sdk/completion.zsh.inc'; fi
 
-# speedscale env vars
-export SPEEDSCALE_HOME="/Users/josh/.speedscale"
-export PATH=$SPEEDSCALE_HOME:$PATH
-
-# speedctl env vars
-export SPEEDCTL_HOME=/Users/josh/.speedscale
-export PATH=$SPEEDCTL_HOME:$PATH
-
-export PATH=$PATH:/Users/josh/.linkerd2/bin
-
 # solana
 export PATH="/Users/josh/.local/share/solana/install/active_release/bin:$PATH"
 
@@ -196,3 +187,5 @@ export PATH="/Users/josh/.local/share/solana/install/active_release/bin:$PATH"
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+

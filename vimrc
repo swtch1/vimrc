@@ -375,6 +375,7 @@ nnoremap <Leader>fF :Ag FIXME: \(JMT\)<CR>
 nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
+nnoremap <Leader>rc :CocRestart<CR>
 nnoremap <Leader>rt :AsyncRun -mode=term 
 nnoremap <Leader>rr :AsyncRun -mode=term <Up><CR>
 nnoremap <Leader>rj V:!jq<CR>
