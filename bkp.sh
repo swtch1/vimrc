@@ -4,6 +4,7 @@
 
 echo 'copying vimrc...'
 cp ~/.vimrc ./vimrc
+cp ~/.config/nvim ./nvim
 
 echo 'copying karabiner.json...'
 cp ~/.config/karabiner/karabiner.json ./karabiner.json
