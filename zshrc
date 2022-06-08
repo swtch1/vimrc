@@ -57,6 +57,7 @@ alias theqr='open ~/doc/theqr.png'
 alias utc='date -u'
 alias ag='ag --skip-vcs-ignores'
 alias agg='ag --go'
+alias glab='PAGER=cat glab'
 
 # environment
 alias envm='(drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env) && envl'
@@ -67,10 +68,10 @@ envl # load the env every time
 alias s='speedctl'
 alias ss='speedscale'
 alias sm='speedmgmt'
-alias soa='s deploy operator -e $(k config current-context) | k apply -f -'
-alias soax='s deploy operator -e $(k config current-context) -X | k apply -f -'
-alias sod='s deploy operator -e $(k config current-context) | k delete -n speedscale -f -'
-alias sodx='s deploy operator -e $(k config current-context) -X | k delete -n speedscale -f -'
+alias soa='s deploy operator -e jmt-dev | k apply -n speedscale -f -'
+alias soax='s deploy operator -e jmt-dev -X | k apply -n speedscale -f -'
+alias sod='s deploy operator | k delete -n speedscale -f -'
+alias sodx='s deploy operator -X | k delete -n speedscale -f -'
 export PROD_USER_ID='bec83d8b-2c15-4e2e-a0a5-7a90193665f4'
 
 # task warrior
@@ -152,14 +153,6 @@ function b64d() {
   echo "$1" | base64 -d
 }
 
-# run go tests easier
-function t() {
-  if [[ -z "$1" ]]; then
-    go test -timeout=15s -race  ./...
-    return
-  fi
-  go test -timeout=5s -race ./... -run "$1"
-}
 # run go tests easier.. with file watches
 function tw() {
   while true; do
@@ -188,4 +181,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
+
+# speedctl env vars
+export SPEEDCTL_HOME=/Users/josh/.speedscale
+export PATH=$SPEEDCTL_HOME:$PATH
+
+
+# speedscale env vars
+export SPEEDSCALE_HOME=/Users/josh/.speedscale
+export PATH=$PATH:$SPEEDSCALE_HOME
+
+source ~/.zshrc-lite
 

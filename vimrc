@@ -128,6 +128,10 @@ augroup end
 " plugins
 call plug#begin('~/.vim/plugged')
 
+Plug 'neovim/nvim-lspconfig'
+Plug 'williamboman/nvim-lsp-installer'
+" lua require("nvim-lsp-installer").setup {}
+
 Plug 'mhinz/vim-startify'
 let g:startify_change_to_dir = 0
 let g:startify_bookmarks = [ {'v': '~/.vimrc'}, {'z': '~/.zshrc'} ]
@@ -254,6 +258,12 @@ let g:buffergator_show_full_directory_path = 0
 let g:buffergator_vsplit_size = 120
 let g:buffergator_viewport_split_policy = "L"
 
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
 Plug 'neoclide/coc.nvim'
 " fold current buffer
 command! -nargs=? Fold :call     CocAction('fold', <f-args>)
@@ -272,6 +282,7 @@ let g:terminal_pos = "topleft"
 let g:terminal_close = 1
 let g:terminal_cwd = 0
 let g:terminal_list = 0 " hide terminal in buffers list
+
 Plug 'skywind3000/asyncrun.vim'
 
 Plug 'szw/vim-maximizer'
@@ -309,7 +320,8 @@ nnoremap <Leader>w :w<CR>
 map Q <Nop>
 
 inoremap <C-@> <C-x><C-o>
-nnoremap <Leader>o :only<CR>:noh<CR>
+nnoremap <Leader>O :only<CR>:noh<CR>
+nnoremap <Leader>o :lclose<CR>:cclose<CR>:noh<CR>
 nnoremap <Leader>q :q<CR>
 nnoremap <Leader>Q :q!<CR>
 nnoremap <Leader>p :Files<CR>
@@ -375,11 +387,11 @@ nnoremap <Leader>fF :Ag FIXME: \(JMT\)<CR>
 nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
-nnoremap <Leader>rc :CocRestart<CR>
-nnoremap <Leader>rt :AsyncRun -mode=term 
+nnoremap <Leader>rt :AsyncRun -mode=term source ~/.zshrc-lite && 
 nnoremap <Leader>rr :AsyncRun -mode=term <Up><CR>
 nnoremap <Leader>rj V:!jq<CR>
 vnoremap <Leader>rj :!jq<CR>
+nnoremap <buffer> <Leader>rc :lua vim.lsp.buf.code_action()<CR>
 " nnoremap <Leader>ra :ALEReset<CR>
 
 " keymap | resize
@@ -402,42 +414,44 @@ map #  <Plug>(incsearch-nohl-#)
 autocmd FileType rs nnoremap <Leader>w :rustfmt %:w<CR>
 
 " keymap | navigation
-nnoremap <silent><nowait> <Leader>a  :<C-u>CocList diagnostics<cr>
+" nnoremap <silent><nowait> <Leader>a  :<C-u>CocList diagnostics<cr>
 " find symbols in the current document
-nnoremap <silent><nowait> <space>s  :<C-u>CocList outline<cr>
+" nnoremap <silent><nowait> <space>s  :<C-u>CocList outline<cr>
 " find symbols in the workspace
-nnoremap <silent><nowait> <Leader>S  :<C-u>CocList -I symbols<cr>
-nmap <Leader>gu <Plug>(coc-implementation)
+" nnoremap <silent><nowait> <Leader>S  :<C-u>CocList -I symbols<cr>
+" nmap <Leader>gu <Plug>(coc-implementation)
 autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
-nmap <Leader>gd <Plug>(coc-definition)
-nmap <Leader>gy <Plug>(coc-type-definition)
-nmap <Leader>gY :vsp<CR><Plug>(coc-type-definition)
+" nmap <Leader>gd <Plug>(coc-definition)
+" nmap <Leader>gy <Plug>(coc-type-definition)
+" nmap <Leader>gY :vsp<CR><Plug>(coc-type-definition)
 " nmap <Leader>gR <Plug>(coc-references)
-nmap <Leader>gr <Plug>(coc-references-used)
-nmap <Leader>gR :call CocAction('jumpReferences')<CR>
-nmap <C-k> :CocPrev<CR>
-nmap <C-j> :CocNext<CR>
-nmap <Leader>gn <Plug>(coc-rename)
-autocmd FileType go nnoremap <Leader>gD :vsp<CR>:GoDef<CR>
-autocmd FileType go nnoremap <Leader>gS :sp<CR>:GoDef<CR>
+" nmap <Leader>gr <Plug>(coc-references-used)
+" nmap <Leader>gR :call CocAction('jumpReferences')<CR>
+" nmap <C-k> :CocPrev<CR>
+" nmap <C-j> :CocNext<CR>
+nmap <C-k> :cprev<CR>
+nmap <C-j> :cnext<CR>
+" nmap <Leader>gn <Plug>(coc-rename)
+" autocmd FileType go nnoremap <Leader>gD :vsp<CR>:GoDef<CR>
+" autocmd FileType go nnoremap <Leader>gS :sp<CR>:GoDef<CR>
 autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
-autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
-nmap <Leader>gi :call CocActionAsync('doHover')<CR>
-autocmd FileType go nnoremap <Leader>gI :GoSameIds<CR>
-autocmd FileType go nnoremap <Leader>gII :GoSameIdsClear<CR>
+" autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
+" nmap <Leader>gi :call CocActionAsync('doHover')<CR>
+" autocmd FileType go nnoremap <Leader>gI :GoSameIds<CR>
+" autocmd FileType go nnoremap <Leader>gII :GoSameIdsClear<CR>
 autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>
-autocmd FileType go nnoremap <Leader>gc :GoMetaLinter<CR>
-autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
-autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
-autocmd FileType go nnoremap <Leader>gg :GoRun<CR>
-autocmd FileType go nnoremap <Leader>gs :GoFillStruct<CR>
-autocmd FileType go nnoremap <Leader>gv :GoVet<CR>
-autocmd FileType go nnoremap <Leader>gV :GoMetaLinter<CR>
+" autocmd FileType go nnoremap <Leader>gc :GoMetaLinter<CR>
+" autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
+" autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
+" autocmd FileType go nnoremap <Leader>gg :GoRun<CR>
+" autocmd FileType go nnoremap <Leader>gs :GoFillStruct<CR>
+" autocmd FileType go nnoremap <Leader>gv :GoVet<CR>
+" autocmd FileType go nnoremap <Leader>gV :GoMetaLinter<CR>
 autocmd FileType go nnoremap <Leader>gh :GoCoverageToggle<CR>
-autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
+" autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
 nnoremap <Leader>dd :call vimspector#Launch()<CR>
-autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
-autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
+" autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
+" autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
 autocmd FileType go nnoremap <Leader>go :AsyncRun -mode=term go doc %:p:h<CR>
 autocmd FileType go nnoremap <Leader>gO :AsyncRun -mode=term go doc -all %:p:h<CR>
 nnoremap <Leader>db :call vimspector#ToggleBreakpoint()<CR>
@@ -460,9 +474,9 @@ nnoremap <Leader>cu :GitGutterUndoHunk<CR>
 nnoremap <Leader>cm :Gdiffsplit origin/master<CR>
 
 " keymap | coc
-nnoremap <Leader>cr :CocListResume<CR>
-nnoremap <Leader>cn :CocNext<CR>
-nnoremap <Leader>cN :CocPrev<CR>
+" nnoremap <Leader>cr :CocListResume<CR>
+" nnoremap <Leader>cn :CocNext<CR>
+" nnoremap <Leader>cN :CocPrev<CR>
 
 " macros
 let @i="oif err != nil {\<CR>return\<CR>}\<Esc>kA fmt.Errorf(\": %w\", err)\<Esc>BBhhi"
