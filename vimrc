@@ -234,9 +234,9 @@ let g:airline_mode_map = {
     \ ''     : '',
     \ }
 let g:airline_theme='xtermlight'
-"let g:airline_theme='term'
-"let g:airline_theme='luna'
-"let g:airline_theme='base16_heetch'
+" let g:airline_theme='term'
+" let g:airline_theme='luna'
+" let g:airline_theme='base16_heetch'
 
 Plug 'mbbill/undotree'
 
@@ -308,8 +308,6 @@ source ~/.vim/plugged/gruvbox/colors/gruvbox.vim
 " == LIGHT ==
 " Plug 'chasinglogic/modus-themes-vim'
 " source ~/.vim/plugged/modus-themes-vim/colors/modus-operandi.vim
-" Plug 'datMaffin/vim-colors-bionik'
-" source ~/.vim/plugged/vim-colors-bionik/colors/bionik.vim
 
 call plug#end()
 
@@ -388,7 +386,7 @@ nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
 nnoremap <Leader>rt :AsyncRun -mode=term source ~/.zshrc-lite && 
-nnoremap <Leader>rr :AsyncRun -mode=term <Up><CR>
+nnoremap <Leader>rr :AsyncRun<Up><CR>
 nnoremap <Leader>rj V:!jq<CR>
 vnoremap <Leader>rj :!jq<CR>
 nnoremap <buffer> <Leader>rc :lua vim.lsp.buf.code_action()<CR>

@@ -41,6 +41,7 @@ alias c='clear'
 # I shouldn't have to do this
 alias uniq='sort -u'
 alias mk='minikube'
+alias cdt='cd $(mktemp -d)'
 alias cdc='cd ~/code'
 alias cds='cd ~/code/speedscale/'
 alias cdsm='cd ~/code/ss/ss/master/'
@@ -65,9 +66,6 @@ alias envl='set -o allexport; source ~/env/dev.env; set +o allexport'
 envl # load the env every time
 
 # speedctl
-alias s='speedctl'
-alias ss='speedscale'
-alias sm='speedmgmt'
 alias soa='s deploy operator -e jmt-dev | k apply -n speedscale -f -'
 alias soax='s deploy operator -e jmt-dev -X | k apply -n speedscale -f -'
 alias sod='s deploy operator | k delete -n speedscale -f -'
@@ -159,6 +157,19 @@ function tw() {
     t $1
     fswatch -1 . > /dev/null
   done
+}
+
+# connect to timescale
+function connect-timescale() {
+  if [[ -z $CONTEXT ]];then
+    echo "CONTEXT is required"
+    return
+  fi
+  if [[ -z $NAMESPACE ]];then
+    echo "NAMESPACE is required"
+    return
+  fi
+  k --context $CONTEXT --namespace $NAMESPACE exec -it timescaledb-0 -c timescaledb -- bash -c 'PGPASSWORD=$PATRONI_speedscale_PASSWORD psql --user speedscale $TIMESCALE_DB_NAME'
 }
 
 # know that our terminal is from vim
