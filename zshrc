@@ -44,12 +44,12 @@ alias mk='minikube'
 alias cdt='cd $(mktemp -d)'
 alias cdc='cd ~/code'
 alias cds='cd ~/code/speedscale/'
+alias cdsp='cd ~/code/speedscale-pristine/'
 alias cdsm='cd ~/code/ss/ss/master/'
 alias rigwake='wakeonlan A8:A1:59:2D:26:60'
 # alias kdbg='kill $(lsof -i -P | grep -i listen | grep __debug_ | tr -s " " | cut -d " " -f 2)' # for vscode
 alias tf='terraform'
 alias sk='skaffold'
-alias awslogin='aws sso login --profile dev'
 alias gcurl='grpcurl'
 alias e='exit'
 alias ff="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
@@ -59,6 +59,32 @@ alias utc='date -u'
 alias ag='ag --skip-vcs-ignores'
 alias agg='ag --go'
 alias glab='PAGER=cat glab'
+function awslogin() {
+  echo "--> unsetting AWS env vars"
+  unset AWS_ACCESS_KEY_ID
+  unset AWS_SECRET_ACCESS_KEY
+  unset AWS_SESSION_TOKEN
+  echo '--> login'
+  aws sso login --profile dev
+  echo '--> update kubeconfig - dev'
+  aws eks update-kubeconfig --name dev-sstenant-eks-cluster --region us-east-1 --profile dev
+  echo '--> update kubeconfig - staging'
+  aws eks update-kubeconfig --name staging-sstenant-eks-cluster --region us-east-1 --profile staging
+  echo '--> update kubeconfig - prod'
+  aws eks update-kubeconfig --name prod-sstenant-eks-cluster --region us-east-1 --profile prod
+  echo '--> update kubeconfig - kraken'
+  aws eks update-kubeconfig --name kraken --region us-east-1 --profile demo
+  echo '--> update kubeconfig - dev-decoy'
+  aws eks update-kubeconfig --name dev-decoy --region us-east-1 --profile demo
+  echo '--> update kubeconfig - istio-decoy'
+  aws eks update-kubeconfig --name istio-decoy --region us-east-1 --profile demo
+  echo '--> update kubeconfig - staging-decoy'
+  aws eks update-kubeconfig --name staging-decoy --region us-east-1 --profile demo
+  echo '--> update kubeconfig - prod-decoy'
+  aws eks update-kubeconfig --name prod-decoy --region us-east-1 --profile demo
+  echo '--> setting kube context to minikube'
+  kubectx minikube
+}
 
 # environment
 alias envm='(drop ~/env/dev.env &> /dev/null || vim ~/env/dev.env) && envl'
@@ -125,6 +151,7 @@ alias gr='git reviewone'
 
 # kubernetes
 source <(kubectl completion zsh)
+alias watch='viddy'
 alias k='kubectl'
 alias wk='watch kubectl'
 alias kx='kubectx'

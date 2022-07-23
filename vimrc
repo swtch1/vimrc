@@ -178,24 +178,6 @@ vnoremap <Leader>/ :Commentary<CR><Esc>
 
 Plug 'machakann/vim-highlightedyank' "highlight what you yank
 
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-let g:go_metalinter_command = 'staticcheck'
-let g:go_debug_log_output = ''
-let g:go_doc_popup_window = 1
-let g:go_term_enabled=0
-let g:go_term_reuse = 1
-let g:go_term_close_on_exit = 0
-let g:go_term_mode="split"
-let g:go_metalinter_autosave=0
-let g:go_code_completion_icase = 1
-let g:go_gopls_use_placeholders = "gopls"
-let g:go_auto_type_info=0 " auto show signature
-let g:go_imports_mode='gopls'
-" let g:go_imports_autosave=1
-" silent! let g:go_gopls_local=trim(system('{cd '. shellescape(expand('%:h')) .' && go list -m;}'))
-"let g:go_auto_sameids = 1
-"let g:go_list_height = 25
-
 Plug 'andrewradev/simple_bookmarks.vim'
 let g:simple_bookmarks_signs = 1
 nnoremap <Leader>ma :Bookmark 
@@ -245,9 +227,9 @@ let g:NERDTreeWinSize=70
 let NERDTreeQuitOnOpen=1
 
 Plug 'SirVer/ultisnips'
-let g:UltiSnipsExpandTrigger='<F5>'
-" let g:UltiSnipsJumpForwardTrigger='<c-j>'
-" let g:UltiSnipsJumpBackwardTrigger='<c-k>'
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger='<c-j>'
+let g:UltiSnipsJumpBackwardTrigger='<c-k>'
 
 Plug 'puremourning/vimspector'
 
@@ -264,16 +246,16 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-cmdline'
 Plug 'hrsh7th/nvim-cmp'
 
-Plug 'neoclide/coc.nvim'
-" fold current buffer
-command! -nargs=? Fold :call     CocAction('fold', <f-args>)
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
-                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Plug 'neoclide/coc.nvim'
+" " fold current buffer
+" command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+" inoremap <silent><expr> <TAB>
+"       \ pumvisible() ? "\<C-n>" :
+"       \ <SID>check_back_space() ? "\<TAB>" :
+"       \ coc#refresh()
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <silent><expr> <CR> pumvisible() ? coc#_select_confirm()
+"                               \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 Plug 'skywind3000/vim-terminal-help'
 let g:terminal_key = "<c-h>"
@@ -309,7 +291,113 @@ source ~/.vim/plugged/gruvbox/colors/gruvbox.vim
 " Plug 'chasinglogic/modus-themes-vim'
 " source ~/.vim/plugged/modus-themes-vim/colors/modus-operandi.vim
 
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+
+" For ultisnips users.
+Plug 'SirVer/ultisnips'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+
 call plug#end()
+
+lua <<EOF
+  ---- NVIM-CMP ----
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      -- REQUIRED - you must specify a snippet engine
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+        -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+        -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+        vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+      end,
+    },
+    window = {
+      -- completion = cmp.config.window.bordered(),
+      -- documentation = cmp.config.window.bordered(),
+    },
+    mapping = cmp.mapping.preset.insert({
+      ['<Tab>'] = cmp.mapping.select_next_item(),
+      ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+      ['<C-f>'] = cmp.mapping.scroll_docs(4),
+      ['<C-Space>'] = cmp.mapping.complete(),
+      ['<C-e>'] = cmp.mapping.abort(),
+      ['<CR>'] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+    }),
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+      -- { name = 'luasnip' }, -- For luasnip users.
+      { name = 'ultisnips' }, -- For ultisnips users.
+      -- { name = 'snippy' }, -- For snippy users.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Set configuration for specific filetype.
+  cmp.setup.filetype('gitcommit', {
+    sources = cmp.config.sources({
+      { name = 'cmp_git' }, -- You can specify the `cmp_git` source if you were installed it.
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/` (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline('/', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
+  cmp.setup.cmdline(':', {
+    mapping = cmp.mapping.preset.cmdline(),
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  require('lspconfig')['gopls'].setup {
+    capabilities = capabilities
+  }
+
+  ---- LSPSAGA ----
+  vim.keymap.set("n", "<C-s>", require("lspsaga.signaturehelp").signature_help, { silent = true,noremap = true})
+  vim.keymap.set("i", "<C-s>", require("lspsaga.signaturehelp").signature_help, { silent = true,noremap = true})
+
+  local action = require("lspsaga.codeaction")
+  vim.keymap.set("n", "<leader>ra", "<cmd>Lspsaga code_action<CR>", { silent = true,noremap = true })
+  vim.keymap.set("v", "<leader>ra", "<cmd><C-U>Lspsaga range_code_action<CR>", { silent = true,noremap = true })
+  vim.keymap.set("n", "<leader>gn", "<cmd>Lspsaga rename<CR>", { silent = true,noremap = true })
+  vim.keymap.set("n", "<leader>gI", "<cmd>Lspsaga preview_definition<CR>", { silent = true })
+  local saga = require("lspsaga")
+  saga.init_lsp_saga({
+    code_action_icon = "💡",
+    code_action_keys = {
+      quit = "<ESC>",
+      exec = "<CR>",
+    },
+    show_diagnostic_source = true,
+    max_preview_lines = 25,
+  })
+EOF
 
 " keymap | general
 " make saving easier
@@ -386,7 +474,7 @@ nnoremap <Leader>fl :GcLog %<CR>
 
 " keymap | run
 nnoremap <Leader>rt :AsyncRun -mode=term source ~/.zshrc-lite && 
-nnoremap <Leader>rr :AsyncRun<Up><CR>
+nnoremap <Leader>rr :AsyncRun<Up><CR><CR>
 nnoremap <Leader>rj V:!jq<CR>
 vnoremap <Leader>rj :!jq<CR>
 nnoremap <buffer> <Leader>rc :lua vim.lsp.buf.code_action()<CR>
@@ -418,7 +506,6 @@ autocmd FileType rs nnoremap <Leader>w :rustfmt %:w<CR>
 " find symbols in the workspace
 " nnoremap <silent><nowait> <Leader>S  :<C-u>CocList -I symbols<cr>
 " nmap <Leader>gu <Plug>(coc-implementation)
-autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
 " nmap <Leader>gd <Plug>(coc-definition)
 " nmap <Leader>gy <Plug>(coc-type-definition)
 " nmap <Leader>gY :vsp<CR><Plug>(coc-type-definition)
@@ -430,26 +517,7 @@ autocmd FileType go nnoremap <Leader>gd :GoDef<CR>
 nmap <C-k> :cprev<CR>
 nmap <C-j> :cnext<CR>
 " nmap <Leader>gn <Plug>(coc-rename)
-" autocmd FileType go nnoremap <Leader>gD :vsp<CR>:GoDef<CR>
-" autocmd FileType go nnoremap <Leader>gS :sp<CR>:GoDef<CR>
-autocmd FileType go nnoremap <Leader>gp :GoDefPop<CR>
-" autocmd FileType go nnoremap <Leader>gi :GoDoc<CR>
-" nmap <Leader>gi :call CocActionAsync('doHover')<CR>
-" autocmd FileType go nnoremap <Leader>gI :GoSameIds<CR>
-" autocmd FileType go nnoremap <Leader>gII :GoSameIdsClear<CR>
-autocmd FileType go nnoremap <Leader>ga :GoAlternate!<CR>
-" autocmd FileType go nnoremap <Leader>gc :GoMetaLinter<CR>
-" autocmd FileType go nnoremap <Leader>gt :TestSuite<CR>
-" autocmd FileType go nnoremap <Leader>gf :TestNearest<CR>
-" autocmd FileType go nnoremap <Leader>gg :GoRun<CR>
-" autocmd FileType go nnoremap <Leader>gs :GoFillStruct<CR>
-" autocmd FileType go nnoremap <Leader>gv :GoVet<CR>
-" autocmd FileType go nnoremap <Leader>gV :GoMetaLinter<CR>
-autocmd FileType go nnoremap <Leader>gh :GoCoverageToggle<CR>
-" autocmd FileType go nnoremap <Leader>gl :TestLast<CR>
 nnoremap <Leader>dd :call vimspector#Launch()<CR>
-" autocmd FileType go nnoremap <Leader>dt :GoDebugTest<CR>
-" autocmd FileType go nnoremap <Leader>df :GoDebugTestFunc<CR>
 autocmd FileType go nnoremap <Leader>go :AsyncRun -mode=term go doc %:p:h<CR>
 autocmd FileType go nnoremap <Leader>gO :AsyncRun -mode=term go doc -all %:p:h<CR>
 nnoremap <Leader>db :call vimspector#ToggleBreakpoint()<CR>
@@ -458,7 +526,6 @@ nnoremap <Leader>do :call vimspector#StepOut()<CR>
 nnoremap <Leader>dn :call vimspector#StepOver()<CR>
 nnoremap <Leader>di :call vimspector#StepInto()<CR>
 nnoremap <Leader>dh :call vimspector#RunToCursor()<CR>
-autocmd FileType go nnoremap <Leader>dp :GoDebugPrint 
 nnoremap <Leader>dq :call vimspector#Reset()<CR>
 nnoremap <Leader>dr :call vimspector#Restart()<CR>
 
