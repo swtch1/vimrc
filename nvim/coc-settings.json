@@ -1,0 +1,12 @@
+{
+  "list.maxPreviewHeight": 30,
+  "go.goplsOptions": {
+    "local": "gitlab.com/speedscale/speedscale",
+    "experimentalPostfixCompletions": true,
+    "analyses": {
+      "unreachable": true,
+      "unusedparams": true
+    },
+    "staticcheck": true
+  }
+}

@@ -2,9 +2,11 @@
 
 # A script to backup local dot files.
 
+set -e
+
 echo 'copying vimrc...'
 cp ~/.vimrc ./vimrc
-cp ~/.config/nvim ./nvim
+cp -r ~/.config/nvim ./nvim
 
 echo 'copying karabiner.json...'
 cp ~/.config/karabiner/karabiner.json ./karabiner.json
